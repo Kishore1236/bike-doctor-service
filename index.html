@@ -1,0 +1,2339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080808">
+<meta name="description" content="Bike Doctor - Professional doorstep bike cleaning, care, pickup and delivery service.">
+<title>Bike Doctor | Your Bike. Our Care.</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Manrope:wght@600;700;800&display=swap');
+
+:root{
+    --orange:#ff6a00;
+    --orange-light:#ff8a38;
+    --black:#050505;
+    --bg:#0a0a0a;
+    --card:#111111;
+    --card2:#151515;
+    --border:#242424;
+    --text:#f5f5f5;
+    --muted:#929292;
+    --green:#20c77a;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:#020202;
+    color:var(--text);
+    font-family:Inter,Arial,sans-serif;
+    overflow-x:hidden;
+}
+
+button,
+input,
+select,
+textarea{
+    font-family:inherit;
+}
+
+button,
+a{
+    -webkit-tap-highlight-color:transparent;
+}
+
+.app{
+    width:100%;
+    max-width:560px;
+    margin:auto;
+    min-height:100vh;
+    background:
+        radial-gradient(circle at 90% 5%,rgba(255,106,0,.07),transparent 28%),
+        var(--bg);
+    padding-bottom:95px;
+}
+
+/* =========================
+   TOP BAR
+========================= */
+
+.topbar{
+    position:sticky;
+    top:0;
+    z-index:100;
+    padding:13px 18px 12px;
+    background:rgba(7,7,7,.88);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    border-bottom:1px solid rgba(255,255,255,.07);
+}
+
+.top-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-family:Manrope,sans-serif;
+    font-size:19px;
+    font-weight:900;
+    letter-spacing:-.5px;
+}
+
+.logo-mark{
+    width:31px;
+    height:31px;
+    display:grid;
+    place-items:center;
+    background:var(--orange);
+    color:#080808;
+    border-radius:9px;
+    font-size:16px;
+    box-shadow:0 6px 20px rgba(255,106,0,.25);
+}
+
+.logo span{
+    color:var(--orange);
+}
+
+.book-small{
+    border:0;
+    padding:10px 16px;
+    border-radius:11px;
+    background:var(--orange);
+    color:#080808;
+    font-size:12px;
+    font-weight:900;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.book-small:hover{
+    transform:translateY(-1px);
+    background:var(--orange-light);
+}
+
+.location{
+    margin-top:7px;
+    color:#777;
+    font-size:10px;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero{
+    padding:42px 18px 24px;
+}
+
+.badge{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    padding:7px 10px;
+    border:1px solid rgba(255,106,0,.28);
+    border-radius:30px;
+    color:#ff9a58;
+    background:rgba(255,106,0,.07);
+    font-size:9px;
+    font-weight:900;
+    letter-spacing:1px;
+}
+
+.badge-dot{
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:var(--orange);
+    box-shadow:0 0 10px var(--orange);
+}
+
+.hero h1{
+    margin-top:18px;
+    font-family:Manrope,sans-serif;
+    font-size:49px;
+    line-height:.96;
+    letter-spacing:-3px;
+    font-weight:900;
+}
+
+.hero h1 span{
+    color:var(--orange);
+}
+
+.hero p{
+    margin-top:18px;
+    max-width:450px;
+    color:#999;
+    font-size:13px;
+    line-height:1.7;
+}
+
+.hero-actions{
+    display:flex;
+    gap:9px;
+    margin-top:22px;
+}
+
+.primary-btn{
+    width:100%;
+    border:0;
+    padding:15px 16px;
+    border-radius:13px;
+    background:var(--orange);
+    color:#080808;
+    font-size:13px;
+    font-weight:900;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.primary-btn:hover{
+    background:var(--orange-light);
+    transform:translateY(-1px);
+}
+
+.secondary-btn{
+    width:100%;
+    border:1px solid var(--border);
+    padding:15px 16px;
+    border-radius:13px;
+    background:#141414;
+    color:#fff;
+    font-size:13px;
+    font-weight:800;
+    cursor:pointer;
+}
+
+.hero-visual{
+    position:relative;
+    height:270px;
+    margin-top:22px;
+    overflow:hidden;
+    border-radius:25px;
+    border:1px solid #252525;
+    background:
+        radial-gradient(circle at 50% 55%,rgba(255,106,0,.22),transparent 25%),
+        radial-gradient(circle at 50% 60%,#272727,transparent 53%),
+        linear-gradient(145deg,#181818,#080808);
+}
+
+.hero-visual::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+        linear-gradient(135deg,transparent 45%,rgba(255,106,0,.07) 46%,transparent 47%),
+        linear-gradient(45deg,transparent 55%,rgba(255,255,255,.025) 56%,transparent 57%);
+}
+
+.bike-graphic{
+    position:absolute;
+    left:50%;
+    top:52%;
+    transform:translate(-50%,-50%);
+    width:250px;
+    height:145px;
+}
+
+.wheel{
+    position:absolute;
+    bottom:4px;
+    width:74px;
+    height:74px;
+    border:7px solid #ddd;
+    border-radius:50%;
+    background:#080808;
+    box-shadow:inset 0 0 0 3px #292929;
+}
+
+.wheel::after{
+    content:"";
+    position:absolute;
+    inset:22px;
+    border-radius:50%;
+    background:var(--orange);
+}
+
+.wheel.left{
+    left:12px;
+}
+
+.wheel.right{
+    right:12px;
+}
+
+.bike-body{
+    position:absolute;
+    left:54px;
+    top:51px;
+    width:145px;
+    height:12px;
+    background:var(--orange);
+    transform:skew(-20deg);
+    border-radius:10px;
+}
+
+.bike-seat{
+    position:absolute;
+    left:105px;
+    top:35px;
+    width:54px;
+    height:9px;
+    background:#ddd;
+    border-radius:10px;
+    transform:rotate(-7deg);
+}
+
+.bike-tank{
+    position:absolute;
+    left:88px;
+    top:45px;
+    width:62px;
+    height:33px;
+    background:#292929;
+    border:2px solid #555;
+    border-radius:25px 10px 25px 8px;
+    transform:rotate(-7deg);
+}
+
+.handle{
+    position:absolute;
+    right:38px;
+    top:30px;
+    width:43px;
+    height:34px;
+    border-top:4px solid #ddd;
+    border-right:4px solid #ddd;
+    transform:rotate(8deg);
+}
+
+.fork{
+    position:absolute;
+    right:53px;
+    top:55px;
+    width:7px;
+    height:67px;
+    background:#bbb;
+    transform:rotate(-13deg);
+    border-radius:8px;
+}
+
+.hero-visual-label{
+    position:absolute;
+    left:16px;
+    bottom:16px;
+    padding:9px 12px;
+    background:rgba(0,0,0,.65);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:11px;
+    backdrop-filter:blur(10px);
+}
+
+.hero-visual-label strong{
+    display:block;
+    font-size:11px;
+}
+
+.hero-visual-label small{
+    display:block;
+    margin-top:3px;
+    color:#888;
+    font-size:9px;
+}
+
+.trust-row{
+    display:flex;
+    gap:7px;
+    margin-top:12px;
+    overflow-x:auto;
+    scrollbar-width:none;
+}
+
+.trust-row::-webkit-scrollbar{
+    display:none;
+}
+
+.trust{
+    flex-shrink:0;
+    padding:8px 11px;
+    border-radius:30px;
+    background:#111;
+    border:1px solid #252525;
+    color:#bbb;
+    font-size:9px;
+    font-weight:700;
+}
+
+/* =========================
+   GENERAL
+========================= */
+
+section{
+    padding:23px 18px;
+}
+
+.section-title{
+    display:flex;
+    align-items:end;
+    justify-content:space-between;
+    margin-bottom:15px;
+}
+
+.section-title h2{
+    font-family:Manrope,sans-serif;
+    font-size:21px;
+    letter-spacing:-.7px;
+}
+
+.section-title span{
+    color:var(--orange);
+    font-size:9px;
+    font-weight:900;
+    letter-spacing:.7px;
+}
+
+/* =========================
+   PICKUP
+========================= */
+
+.pickup-options{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:9px;
+}
+
+.pickup-card{
+    position:relative;
+    overflow:hidden;
+    padding:18px 8px;
+    text-align:center;
+    border:1px solid var(--border);
+    border-radius:17px;
+    background:linear-gradient(145deg,#151515,#0d0d0d);
+    transition:.25s;
+}
+
+.pickup-card:hover{
+    border-color:#444;
+    transform:translateY(-2px);
+}
+
+.pickup-icon{
+    width:42px;
+    height:42px;
+    display:grid;
+    place-items:center;
+    margin:auto;
+    border-radius:13px;
+    background:#1d1d1d;
+    font-size:20px;
+}
+
+.pickup-card h3{
+    margin-top:10px;
+    font-size:12px;
+}
+
+.pickup-card p{
+    margin-top:4px;
+    color:#777;
+    font-size:8px;
+}
+
+/* =========================
+   MOVIE
+========================= */
+
+.movie-card{
+    position:relative;
+    overflow:hidden;
+    padding:22px;
+    border:1px solid rgba(255,106,0,.4);
+    border-radius:22px;
+    background:
+        radial-gradient(circle at 100% 0,rgba(255,106,0,.15),transparent 35%),
+        linear-gradient(145deg,#1b1b1b,#0c0c0c);
+}
+
+.movie-card::after{
+    content:"";
+    position:absolute;
+    right:-45px;
+    bottom:-60px;
+    width:160px;
+    height:160px;
+    border:1px solid rgba(255,106,0,.16);
+    border-radius:50%;
+}
+
+.movie-top{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:13px;
+}
+
+.movie-icon{
+    width:45px;
+    height:45px;
+    display:grid;
+    place-items:center;
+    border-radius:13px;
+    background:#292929;
+    font-size:22px;
+}
+
+.movie-label{
+    color:var(--orange);
+    font-size:9px;
+    font-weight:900;
+    letter-spacing:1px;
+}
+
+.movie-card h3{
+    position:relative;
+    z-index:2;
+    font-family:Manrope,sans-serif;
+    font-size:20px;
+    line-height:1.2;
+}
+
+.movie-card p{
+    position:relative;
+    z-index:2;
+    margin-top:10px;
+    color:#999;
+    font-size:11px;
+    line-height:1.65;
+}
+
+.highlight{
+    color:var(--orange);
+    font-weight:900;
+}
+
+/* =========================
+   SERVICES
+========================= */
+
+.services{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.service{
+    min-height:145px;
+    padding:16px;
+    border:1px solid var(--border);
+    border-radius:18px;
+    background:linear-gradient(145deg,#151515,#0e0e0e);
+    transition:.25s;
+}
+
+.service:hover{
+    border-color:#3b3b3b;
+    transform:translateY(-2px);
+}
+
+.service-icon{
+    width:40px;
+    height:40px;
+    display:grid;
+    place-items:center;
+    border-radius:12px;
+    background:#1e1e1e;
+    font-size:19px;
+}
+
+.service h3{
+    margin-top:11px;
+    font-size:13px;
+}
+
+.service p{
+    margin-top:5px;
+    color:#858585;
+    font-size:10px;
+    line-height:1.5;
+}
+
+/* =========================
+   WHY US
+========================= */
+
+.why-card{
+    padding:19px;
+    border:1px solid var(--border);
+    border-radius:21px;
+    background:linear-gradient(145deg,#171717,#0d0d0d);
+}
+
+.why-item{
+    display:flex;
+    gap:12px;
+    margin-bottom:19px;
+}
+
+.why-item:last-child{
+    margin-bottom:0;
+}
+
+.why-icon{
+    width:38px;
+    height:38px;
+    display:grid;
+    place-items:center;
+    flex-shrink:0;
+    border:1px solid #2a2a2a;
+    border-radius:12px;
+    background:#202020;
+    font-size:17px;
+}
+
+.why-item h3{
+    font-size:13px;
+}
+
+.why-item p{
+    margin-top:4px;
+    color:#858585;
+    font-size:10px;
+    line-height:1.55;
+}
+
+/* =========================
+   PRICING
+========================= */
+
+.package{
+    position:relative;
+    padding:20px;
+    margin-bottom:10px;
+    border:1px solid var(--border);
+    border-radius:20px;
+    background:linear-gradient(145deg,#151515,#0d0d0d);
+}
+
+.package.popular{
+    border-color:rgba(255,106,0,.65);
+    box-shadow:0 0 30px rgba(255,106,0,.05);
+}
+
+.tag{
+    position:absolute;
+    top:15px;
+    right:15px;
+    padding:5px 8px;
+    border-radius:20px;
+    background:var(--orange);
+    color:#080808;
+    font-size:8px;
+    font-weight:900;
+}
+
+.package h3{
+    font-size:15px;
+}
+
+.price{
+    margin:8px 0;
+    font-family:Manrope,sans-serif;
+    font-size:31px;
+    font-weight:900;
+    letter-spacing:-1px;
+}
+
+.price small{
+    color:#777;
+    font-family:Inter,sans-serif;
+    font-size:9px;
+    font-weight:500;
+    letter-spacing:0;
+}
+
+.package ul,
+.membership ul{
+    margin:11px 0 16px;
+    padding-left:18px;
+    color:#aaa;
+    font-size:10px;
+    line-height:1.9;
+}
+
+.dark-btn{
+    width:100%;
+    padding:13px;
+    border:1px solid #303030;
+    border-radius:13px;
+    background:#1b1b1b;
+    color:#fff;
+    font-size:11px;
+    font-weight:800;
+    cursor:pointer;
+}
+
+.dark-btn:hover{
+    background:#252525;
+}
+
+/* =========================
+   MEMBERSHIP
+========================= */
+
+.membership{
+    position:relative;
+    overflow:hidden;
+    padding:21px;
+    border:1px solid rgba(255,106,0,.6);
+    border-radius:21px;
+    background:
+        radial-gradient(circle at 100% 0,rgba(255,106,0,.14),transparent 35%),
+        linear-gradient(145deg,#191919,#0d0d0d);
+}
+
+.membership::after{
+    content:"";
+    position:absolute;
+    width:120px;
+    height:120px;
+    right:-55px;
+    bottom:-55px;
+    border:1px solid rgba(255,106,0,.2);
+    border-radius:50%;
+}
+
+.membership h3{
+    font-family:Manrope,sans-serif;
+    font-size:18px;
+}
+
+.membership .price{
+    color:var(--orange);
+}
+
+/* =========================
+   CHARGES
+========================= */
+
+.zone-box{
+    padding:4px 17px;
+    border:1px solid var(--border);
+    border-radius:18px;
+    background:#111;
+}
+
+.zone{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 0;
+    border-bottom:1px solid #252525;
+    font-size:12px;
+}
+
+.zone:last-child{
+    border:0;
+}
+
+.zone span{
+    color:#aaa;
+}
+
+.zone strong{
+    color:#fff;
+}
+
+/* =========================
+   STEPS
+========================= */
+
+.steps{
+    display:flex;
+    gap:9px;
+    overflow-x:auto;
+    padding-bottom:5px;
+    scrollbar-width:none;
+}
+
+.steps::-webkit-scrollbar{
+    display:none;
+}
+
+.step{
+    min-width:165px;
+    padding:17px;
+    border:1px solid var(--border);
+    border-radius:18px;
+    background:#111;
+}
+
+.step-number{
+    width:31px;
+    height:31px;
+    display:grid;
+    place-items:center;
+    border-radius:50%;
+    background:var(--orange);
+    color:#080808;
+    font-size:11px;
+    font-weight:900;
+}
+
+.step h3{
+    margin-top:12px;
+    font-size:13px;
+}
+
+.step p{
+    margin-top:5px;
+    color:#777;
+    font-size:10px;
+    line-height:1.5;
+}
+
+/* =========================
+   FAQ
+========================= */
+
+.faq{
+    padding:15px 0;
+    border-bottom:1px solid #242424;
+}
+
+.faq summary{
+    list-style:none;
+    position:relative;
+    padding-right:25px;
+    font-size:12px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.faq summary::-webkit-details-marker{
+    display:none;
+}
+
+.faq summary::after{
+    content:"+";
+    position:absolute;
+    right:0;
+    top:-4px;
+    color:var(--orange);
+    font-size:18px;
+    font-weight:400;
+}
+
+.faq[open] summary::after{
+    content:"−";
+}
+
+.faq p{
+    margin-top:9px;
+    color:#858585;
+    font-size:10px;
+    line-height:1.6;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer{
+    padding:25px 18px 115px;
+    border-top:1px solid #181818;
+    text-align:center;
+}
+
+.footer-logo{
+    font-family:Manrope,sans-serif;
+    font-size:18px;
+    font-weight:900;
+}
+
+.footer-logo span{
+    color:var(--orange);
+}
+
+.footer p{
+    margin-top:7px;
+    color:#666;
+    font-size:9px;
+}
+
+.footer-copy{
+    margin-top:18px;
+    color:#444;
+    font-size:8px;
+}
+
+/* =========================
+   BOTTOM NAV
+========================= */
+
+.bottom-nav{
+    position:fixed;
+    left:50%;
+    bottom:0;
+    transform:translateX(-50%);
+    z-index:300;
+    width:100%;
+    max-width:560px;
+    display:flex;
+    gap:8px;
+    padding:10px 13px;
+    background:rgba(10,10,10,.94);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    border-top:1px solid rgba(255,255,255,.08);
+}
+
+.bottom-btn{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    padding:13px;
+    border-radius:13px;
+    text-decoration:none;
+    font-size:11px;
+    font-weight:900;
+}
+
+.whatsapp{
+    background:#123a29;
+    color:#aaffd1;
+}
+
+.book{
+    border:0;
+    background:var(--orange);
+    color:#080808;
+    cursor:pointer;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal{
+    position:fixed;
+    inset:0;
+    z-index:500;
+    display:none;
+    align-items:flex-end;
+    background:rgba(0,0,0,.82);
+    backdrop-filter:blur(6px);
+}
+
+.modal.active{
+    display:flex;
+}
+
+.booking{
+    width:100%;
+    max-width:560px;
+    max-height:94vh;
+    margin:auto 0 0;
+    padding:21px;
+    overflow-y:auto;
+    border:1px solid #292929;
+    border-radius:25px 25px 0 0;
+    background:#101010;
+    box-shadow:0 -20px 70px rgba(0,0,0,.7);
+}
+
+.close{
+    float:right;
+    width:35px;
+    height:35px;
+    border:0;
+    border-radius:50%;
+    background:#222;
+    color:#fff;
+    font-size:20px;
+    cursor:pointer;
+}
+
+.booking h2{
+    padding-right:45px;
+    font-family:Manrope,sans-serif;
+    font-size:21px;
+}
+
+.booking-sub{
+    margin-top:5px;
+    color:#777;
+    font-size:10px;
+}
+
+.form-divider{
+    height:1px;
+    margin:18px 0 3px;
+    background:#222;
+}
+
+.field{
+    margin-top:14px;
+}
+
+.field label{
+    display:block;
+    margin-bottom:6px;
+    color:#858585;
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:.3px;
+}
+
+.field input,
+.field select,
+.field textarea{
+    width:100%;
+    padding:13px;
+    outline:none;
+    border:1px solid #2b2b2b;
+    border-radius:12px;
+    background:#181818;
+    color:#fff;
+    font-size:12px;
+}
+
+.field input::placeholder,
+.field textarea::placeholder{
+    color:#555;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+    border-color:var(--orange);
+    box-shadow:0 0 0 3px rgba(255,106,0,.06);
+}
+
+.field textarea{
+    min-height:78px;
+    resize:none;
+}
+
+.submit{
+    width:100%;
+    margin-top:17px;
+    padding:15px;
+    border:0;
+    border-radius:14px;
+    background:var(--orange);
+    color:#080808;
+    font-size:12px;
+    font-weight:900;
+    cursor:pointer;
+}
+
+.submit:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+.notice{
+    margin-top:13px;
+    padding:12px;
+    border:1px solid #252525;
+    border-radius:12px;
+    background:#151515;
+    color:#777;
+    font-size:9px;
+    line-height:1.55;
+}
+
+.loading{
+    display:none;
+    margin-top:11px;
+    color:var(--orange);
+    text-align:center;
+    font-size:10px;
+}
+
+.success{
+    display:none;
+    margin-top:11px;
+    padding:12px;
+    border-radius:12px;
+    background:#103825;
+    color:#aaffd1;
+    text-align:center;
+    font-size:10px;
+}
+
+/* =========================
+   ANIMATION
+========================= */
+
+@keyframes floatBike{
+    0%,100%{
+        transform:translate(-50%,-50%) translateY(0);
+    }
+    50%{
+        transform:translate(-50%,-50%) translateY(-5px);
+    }
+}
+
+.bike-graphic{
+    animation:floatBike 4s ease-in-out infinite;
+}
+
+/* =========================
+   DESKTOP
+========================= */
+
+@media(min-width:700px){
+
+    body{
+        background:
+            radial-gradient(circle at center,rgba(255,106,0,.05),transparent 35%),
+            #050505;
+    }
+
+    .app{
+        box-shadow:0 0 100px rgba(0,0,0,.9);
+    }
+}
+
+@media(max-width:370px){
+
+    .hero h1{
+        font-size:43px;
+    }
+
+    .hero-actions{
+        flex-direction:column;
+    }
+
+    .services{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- =========================
+     TOP BAR
+========================= -->
+
+<header class="topbar">
+
+    <div class="top-row">
+
+        <div class="logo">
+            <div class="logo-mark">🏍</div>
+            BIKE<span>DOCTOR</span>
+        </div>
+
+        <button class="book-small" onclick="openBooking()">
+            Book Pickup
+        </button>
+
+    </div>
+
+    <div class="location">
+        📍 Doorstep pickup & delivery
+    </div>
+
+</header>
+
+
+<!-- =========================
+     HERO
+========================= -->
+
+<section class="hero">
+
+    <div class="badge">
+        <span class="badge-dot"></span>
+        PROFESSIONAL BIKE CARE
+    </div>
+
+    <h1>
+        Your Bike.<br>
+        <span>Our Care.</span>
+    </h1>
+
+    <p>
+        We pick up your bike from your home,
+        office or theatre, take care of it with
+        professional cleaning and care, and
+        deliver it back to you.
+    </p>
+
+    <div class="hero-actions">
+
+        <button class="primary-btn" onclick="openBooking()">
+            Book a Pickup →
+        </button>
+
+        <button class="secondary-btn"
+                onclick="document.getElementById('services').scrollIntoView()">
+            Explore Services
+        </button>
+
+    </div>
+
+    <div class="hero-visual">
+
+        <div class="bike-graphic">
+
+            <div class="wheel left"></div>
+            <div class="wheel right"></div>
+
+            <div class="bike-body"></div>
+            <div class="bike-seat"></div>
+            <div class="bike-tank"></div>
+            <div class="handle"></div>
+            <div class="fork"></div>
+
+        </div>
+
+        <div class="hero-visual-label">
+            <strong>BIKE DOCTOR</strong>
+            <small>Professional doorstep care</small>
+        </div>
+
+    </div>
+
+    <div class="trust-row">
+
+        <div class="trust">✓ Doorstep Pickup</div>
+        <div class="trust">✓ Trained Mechanics</div>
+        <div class="trust">✓ Fast Service</div>
+        <div class="trust">✓ Easy Booking</div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     PICKUP LOCATIONS
+========================= -->
+
+<section>
+
+    <div class="section-title">
+        <h2>Where We Pick Up</h2>
+        <span>3 LOCATIONS</span>
+    </div>
+
+    <div class="pickup-options">
+
+        <div class="pickup-card">
+            <div class="pickup-icon">🏠</div>
+            <h3>Home</h3>
+            <p>We'll come to you</p>
+        </div>
+
+        <div class="pickup-card">
+            <div class="pickup-icon">🏢</div>
+            <h3>Office</h3>
+            <p>Work while we care</p>
+        </div>
+
+        <div class="pickup-card">
+            <div class="pickup-icon">🎬</div>
+            <h3>Theatre</h3>
+            <p>Enjoy your movie</p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     THEATRE CONCEPT
+========================= -->
+
+<section>
+
+    <div class="movie-card">
+
+        <div class="movie-top">
+
+            <div class="movie-icon">🎬</div>
+
+            <div class="movie-label">
+                BIKE DOCTOR THEATRE PICKUP
+            </div>
+
+        </div>
+
+        <h3>
+            Watch Your Movie.<br>
+            We'll Care for Your Bike.
+        </h3>
+
+        <p>
+            Going for a movie? Your movie is
+            typically around <span class="highlight">2.5 hours</span> —
+            enough time for us to pick up your bike
+            from the theatre, clean and care for it,
+            and return it to your location.
+            <br><br>
+            Our target is delivery within
+            <span class="highlight">1.5 hours</span> of pickup,
+            depending on the selected service,
+            location and operating conditions.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     SERVICES
+========================= -->
+
+<section id="services">
+
+    <div class="section-title">
+        <h2>Bike Care Services</h2>
+        <span>PROFESSIONAL CARE</span>
+    </div>
+
+    <div class="services">
+
+        <div class="service">
+            <div class="service-icon">💦</div>
+            <h3>Foam & Water Wash</h3>
+            <p>Deep exterior cleaning with careful drying.</p>
+        </div>
+
+        <div class="service">
+            <div class="service-icon">⛓️</div>
+            <h3>Chain Cleaning</h3>
+            <p>Chain cleaning and lubrication for smoother riding.</p>
+        </div>
+
+        <div class="service">
+            <div class="service-icon">✨</div>
+            <h3>Polishing</h3>
+            <p>Bring back a cleaner and fresher finish.</p>
+        </div>
+
+        <div class="service">
+            <div class="service-icon">🛞</div>
+            <h3>Tyre & Wheel Care</h3>
+            <p>Wheel cleaning and tyre dressing.</p>
+        </div>
+
+        <div class="service">
+            <div class="service-icon">🪖</div>
+            <h3>Helmet Cleaning</h3>
+            <p>Freshen up your helmet and riding gear.</p>
+        </div>
+
+        <div class="service">
+            <div class="service-icon">🔧</div>
+            <h3>Basic Inspection</h3>
+            <p>Simple visual checks and service notes.</p>
+        </div>
+
+        <div class="service">
+            <div class="service-icon">🧽</div>
+            <h3>Deep Cleaning</h3>
+            <p>Extra cleaning for heavily soiled bikes.</p>
+        </div>
+
+        <div class="service">
+            <div class="service-icon">➕</div>
+            <h3>More Services</h3>
+            <p>Additional bike-care services coming soon.</p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     WHY US
+========================= -->
+
+<section>
+
+    <div class="section-title">
+        <h2>Why Bike Doctor?</h2>
+    </div>
+
+    <div class="why-card">
+
+        <div class="why-item">
+
+            <div class="why-icon">👨‍🔧</div>
+
+            <div>
+                <h3>Trained Mechanics</h3>
+                <p>
+                    Your bike is handled by trained
+                    professionals who understand proper
+                    bike care.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="why-item">
+
+            <div class="why-icon">❤️</div>
+
+            <div>
+                <h3>Handled With Care</h3>
+                <p>
+                    We handle every bike with the same
+                    care and attention we would give our own.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="why-item">
+
+            <div class="why-icon">🚚</div>
+
+            <div>
+                <h3>Doorstep Convenience</h3>
+                <p>
+                    No need to ride to a service centre
+                    or wait around for your bike.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="why-item">
+
+            <div class="why-icon">⚡</div>
+
+            <div>
+                <h3>Save Your Time</h3>
+                <p>
+                    Spend your time on what matters while
+                    we take care of your bike.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     PLANS
+========================= -->
+
+<section>
+
+    <div class="section-title">
+        <h2>Our Plans</h2>
+        <span>SIMPLE PRICING</span>
+    </div>
+
+
+    <div class="package">
+
+        <h3>Basic Wash</h3>
+
+        <div class="price">
+            ₹199
+            <small>/ service</small>
+        </div>
+
+        <ul>
+            <li>Pickup & delivery</li>
+            <li>Foam + water wash</li>
+            <li>Drying</li>
+            <li>Tyre cleaning</li>
+        </ul>
+
+        <button class="dark-btn"
+                onclick="openBooking('Basic Wash - ₹199')">
+            Choose Basic
+        </button>
+
+    </div>
+
+
+    <div class="package popular">
+
+        <span class="tag">MOST POPULAR</span>
+
+        <h3>Premium Care</h3>
+
+        <div class="price">
+            ₹299
+            <small>/ service</small>
+        </div>
+
+        <ul>
+            <li>Everything in Basic</li>
+            <li>Chain cleaning</li>
+            <li>Chain lubrication</li>
+            <li>Tyre dressing</li>
+            <li>Plastic care</li>
+        </ul>
+
+        <button class="primary-btn"
+                onclick="openBooking('Premium Care - ₹299')">
+            Choose Premium
+        </button>
+
+    </div>
+
+
+    <div class="package">
+
+        <h3>Bike Care</h3>
+
+        <div class="price">
+            ₹499
+            <small>/ service</small>
+        </div>
+
+        <ul>
+            <li>Deep cleaning</li>
+            <li>Chain service</li>
+            <li>Polishing</li>
+            <li>Helmet cleaning</li>
+            <li>Basic inspection</li>
+        </ul>
+
+        <button class="dark-btn"
+                onclick="openBooking('Bike Care - ₹499')">
+            Choose Bike Care
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     MEMBERSHIP
+========================= -->
+
+<section>
+
+    <div class="section-title">
+        <h2>Monthly Care</h2>
+        <span>BEST VALUE</span>
+    </div>
+
+    <div class="membership">
+
+        <h3>Monthly Bike Care</h3>
+
+        <div class="price">
+            ₹599
+            <small>/ month</small>
+        </div>
+
+        <ul>
+            <li>2 pickup & delivery washes</li>
+            <li>2 chain clean + lube services</li>
+            <li>Priority booking</li>
+            <li>Digital bike-care history</li>
+        </ul>
+
+        <button class="primary-btn"
+                onclick="openBooking('Monthly Bike Care - ₹599')">
+            Join Membership
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     PICKUP CHARGES
+========================= -->
+
+<section>
+
+    <div class="section-title">
+        <h2>Pickup & Drop Charges</h2>
+    </div>
+
+    <div class="zone-box">
+
+        <div class="zone">
+            <span>Up to 5 km</span>
+            <strong>₹20</strong>
+        </div>
+
+        <div class="zone">
+            <span>Up to 10 km</span>
+            <strong>₹35</strong>
+        </div>
+
+        <div class="zone">
+            <span>Up to 15 km</span>
+            <strong>₹50</strong>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     HOW TO BOOK
+========================= -->
+
+<section>
+
+    <div class="section-title">
+        <h2>How It Works</h2>
+        <span>5 EASY STEPS</span>
+    </div>
+
+    <div class="steps">
+
+        <div class="step">
+            <div class="step-number">1</div>
+            <h3>Book Pickup</h3>
+            <p>Open Bike Doctor and start your booking.</p>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <h3>Enter Details</h3>
+            <p>Add your name, mobile, location and landmark.</p>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <h3>Select Slot</h3>
+            <p>Choose your preferred pickup time.</p>
+        </div>
+
+        <div class="step">
+            <div class="step-number">4</div>
+            <h3>Select Plan</h3>
+            <p>Choose the bike-care package you need.</p>
+        </div>
+
+        <div class="step">
+            <div class="step-number">5</div>
+            <h3>We Take Care</h3>
+            <p>We pick up, service and deliver your bike.</p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     FAQ
+========================= -->
+
+<section>
+
+    <div class="section-title">
+        <h2>Frequently Asked</h2>
+    </div>
+
+    <details class="faq">
+        <summary>Where can you pick up my bike?</summary>
+        <p>
+            We currently provide pickup from Home,
+            Office and Theatre locations.
+        </p>
+    </details>
+
+    <details class="faq">
+        <summary>How much is pickup and delivery?</summary>
+        <p>
+            Up to 5 km: ₹20. Up to 10 km: ₹35.
+            Up to 15 km: ₹50.
+        </p>
+    </details>
+
+    <details class="faq">
+        <summary>How long does the service take?</summary>
+        <p>
+            Our target is delivery within 1.5 hours
+            of pickup, depending on the selected service,
+            location and operating conditions.
+        </p>
+    </details>
+
+    <details class="faq">
+        <summary>Can I book during a movie?</summary>
+        <p>
+            Yes. Select Theatre as your pickup location
+            and provide the theatre and landmark details.
+        </p>
+    </details>
+
+    <details class="faq">
+        <summary>How do I contact Bike Doctor?</summary>
+        <p>
+            You can contact us directly through the
+            WhatsApp button at the bottom of the website.
+        </p>
+    </details>
+
+</section>
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer class="footer">
+
+    <div class="footer-logo">
+        BIKE<span>DOCTOR</span>
+    </div>
+
+    <p>
+        Your Bike. Our Care.
+    </p>
+
+    <div class="footer-copy">
+        © 2026 Bike Doctor. All rights reserved.
+    </div>
+
+</footer>
+
+</div>
+
+
+<!-- =========================
+     BOTTOM NAV
+========================= -->
+
+<div class="bottom-nav">
+
+    <a
+        class="bottom-btn whatsapp"
+        href="https://wa.me/916381506396"
+        target="_blank"
+        rel="noopener">
+        💬 WhatsApp
+    </a>
+
+    <button
+        class="bottom-btn book"
+        onclick="openBooking()">
+        🏍️ Book Pickup
+    </button>
+
+</div>
+
+
+<!-- =========================
+     BOOKING MODAL
+========================= -->
+
+<div class="modal" id="bookingModal">
+
+    <div class="booking">
+
+        <button class="close" onclick="closeBooking()">
+            ×
+        </button>
+
+        <h2>Book Your Bike Pickup</h2>
+
+        <div class="booking-sub">
+            Your Bike. Our Care.
+        </div>
+
+        <div class="form-divider"></div>
+
+        <form id="bookingForm">
+
+            <div class="field">
+                <label>YOUR NAME *</label>
+
+                <input
+                    type="text"
+                    id="name"
+                    placeholder="Enter your name"
+                    autocomplete="name"
+                    required>
+            </div>
+
+
+            <div class="field">
+                <label>PICKUP LOCATION *</label>
+
+                <select id="locationType" required>
+
+                    <option value="">
+                        Select location
+                    </option>
+
+                    <option value="Home">
+                        Home
+                    </option>
+
+                    <option value="Office">
+                        Office
+                    </option>
+
+                    <option value="Theatre">
+                        Theatre
+                    </option>
+
+                </select>
+            </div>
+
+
+            <div class="field">
+                <label>LOCATION + LANDMARK *</label>
+
+                <textarea
+                    id="address"
+                    placeholder="Example: XYZ Theatre, Anna Nagar, opposite ABC Hotel"
+                    required></textarea>
+            </div>
+
+
+            <div class="field">
+                <label>MOBILE NUMBER *</label>
+
+                <input
+                    type="tel"
+                    id="phone"
+                    maxlength="10"
+                    inputmode="numeric"
+                    placeholder="10-digit mobile number"
+                    autocomplete="tel"
+                    required>
+            </div>
+
+
+            <div class="field">
+                <label>ALTERNATE MOBILE NUMBER</label>
+
+                <input
+                    type="tel"
+                    id="altPhone"
+                    maxlength="10"
+                    inputmode="numeric"
+                    placeholder="Alternate number">
+            </div>
+
+
+            <div class="field">
+                <label>PICKUP PERSON NAME *</label>
+
+                <input
+                    type="text"
+                    id="pickupName"
+                    placeholder="Person handing over the bike"
+                    required>
+            </div>
+
+
+            <div class="field">
+                <label>RECEIVER NAME *</label>
+
+                <input
+                    type="text"
+                    id="receiverName"
+                    placeholder="Person receiving the bike"
+                    required>
+            </div>
+
+
+            <div class="field">
+                <label>PREFERRED TIME SLOT *</label>
+
+                <select id="slot" required>
+
+                    <option value="">
+                        Select time slot
+                    </option>
+
+                    <option>8:00 AM – 10:00 AM</option>
+                    <option>10:00 AM – 12:00 PM</option>
+                    <option>12:00 PM – 2:00 PM</option>
+                    <option>2:00 PM – 4:00 PM</option>
+                    <option>4:00 PM – 6:00 PM</option>
+                    <option>6:00 PM – 8:00 PM</option>
+                    <option>8:00 PM – 10:00 PM</option>
+
+                </select>
+            </div>
+
+
+            <div class="field">
+                <label>BIKE MODEL *</label>
+
+                <input
+                    type="text"
+                    id="bike"
+                    placeholder="Example: Royal Enfield Classic 350"
+                    required>
+            </div>
+
+
+            <div class="field">
+                <label>CHOOSE PLAN *</label>
+
+                <select id="service" required>
+
+                    <option value="">
+                        Select plan
+                    </option>
+
+                    <option value="Basic Wash - ₹199">
+                        Basic Wash - ₹199
+                    </option>
+
+                    <option value="Premium Care - ₹299">
+                        Premium Care - ₹299
+                    </option>
+
+                    <option value="Bike Care - ₹499">
+                        Bike Care - ₹499
+                    </option>
+
+                    <option value="Monthly Bike Care - ₹599">
+                        Monthly Bike Care - ₹599
+                    </option>
+
+                </select>
+            </div>
+
+
+            <div class="notice">
+
+                📲 Your booking will be sent to Bike Doctor
+                WhatsApp.
+
+                <br><br>
+
+                📊 Your booking details will also be
+                recorded in the Bike Doctor booking
+                Google Sheet.
+
+            </div>
+
+
+            <button
+                class="submit"
+                id="submitButton"
+                type="submit">
+                Confirm Booking →
+            </button>
+
+
+            <div
+                class="loading"
+                id="loadingMessage">
+                Saving your booking...
+            </div>
+
+
+            <div
+                class="success"
+                id="successMessage">
+                ✓ Booking submitted successfully.<br>
+                Opening WhatsApp...
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* ==================================================
+   BIKE DOCTOR SETTINGS
+================================================== */
+
+const WHATSAPP_NUMBER = "916381506396";
+
+const GOOGLE_SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbxo6G9kHuFoehKhQX4OjuXdqWP9gBgdzZtetVUIegfZxsoHz1MsL3NYSpvPZ5ffdhjewg/exec";
+
+
+/* ==================================================
+   ELEMENTS
+================================================== */
+
+const modal = document.getElementById("bookingModal");
+
+const form = document.getElementById("bookingForm");
+
+const loadingMessage =
+document.getElementById("loadingMessage");
+
+const successMessage =
+document.getElementById("successMessage");
+
+const submitButton =
+document.getElementById("submitButton");
+
+
+/* ==================================================
+   OPEN BOOKING
+================================================== */
+
+function openBooking(service){
+
+    modal.classList.add("active");
+
+    document.body.style.overflow = "hidden";
+
+    if(service){
+
+        document.getElementById("service").value = service;
+
+    }
+
+}
+
+
+/* ==================================================
+   CLOSE BOOKING
+================================================== */
+
+function closeBooking(){
+
+    modal.classList.remove("active");
+
+    document.body.style.overflow = "";
+
+}
+
+
+/* CLOSE WHEN CLICKING OUTSIDE */
+
+modal.addEventListener("click",function(e){
+
+    if(e.target === modal){
+
+        closeBooking();
+
+    }
+
+});
+
+
+/* ESCAPE KEY */
+
+document.addEventListener("keydown",function(e){
+
+    if(e.key === "Escape"){
+
+        closeBooking();
+
+    }
+
+});
+
+
+/* ==================================================
+   PHONE INPUT
+================================================== */
+
+document
+.getElementById("phone")
+.addEventListener("input",function(){
+
+    this.value =
+    this.value.replace(/\D/g,"").slice(0,10);
+
+});
+
+
+document
+.getElementById("altPhone")
+.addEventListener("input",function(){
+
+    this.value =
+    this.value.replace(/\D/g,"").slice(0,10);
+
+});
+
+
+/* ==================================================
+   FORM SUBMISSION
+================================================== */
+
+form.addEventListener("submit",async function(e){
+
+    e.preventDefault();
+
+
+    /* ==============================
+       GET DATA
+    ============================== */
+
+    const data = {
+
+        name:
+        document.getElementById("name").value.trim(),
+
+        locationType:
+        document.getElementById("locationType").value,
+
+        address:
+        document.getElementById("address").value.trim(),
+
+        phone:
+        document.getElementById("phone").value.trim(),
+
+        altPhone:
+        document.getElementById("altPhone").value.trim(),
+
+        pickupName:
+        document.getElementById("pickupName").value.trim(),
+
+        receiverName:
+        document.getElementById("receiverName").value.trim(),
+
+        slot:
+        document.getElementById("slot").value,
+
+        bike:
+        document.getElementById("bike").value.trim(),
+
+        service:
+        document.getElementById("service").value
+
+    };
+
+
+    /* ==============================
+       VALIDATE PHONE
+    ============================== */
+
+    if(!/^[0-9]{10}$/.test(data.phone)){
+
+        alert(
+            "Please enter a valid 10-digit mobile number."
+        );
+
+        return;
+
+    }
+
+
+    /* ==============================
+       VALIDATE ALTERNATE NUMBER
+    ============================== */
+
+    if(
+        data.altPhone &&
+        !/^[0-9]{10}$/.test(data.altPhone)
+    ){
+
+        alert(
+            "Please enter a valid alternate mobile number."
+        );
+
+        return;
+
+    }
+
+
+    /* ==============================
+       DISABLE BUTTON
+    ============================== */
+
+    submitButton.disabled = true;
+
+    submitButton.textContent =
+    "Submitting...";
+
+    loadingMessage.style.display = "block";
+
+    successMessage.style.display = "none";
+
+
+    /* ==============================
+       GOOGLE SHEET
+    ============================== */
+
+    try{
+
+        await fetch(
+
+            GOOGLE_SCRIPT_URL,
+
+            {
+
+                method:"POST",
+
+                mode:"no-cors",
+
+                headers:{
+                    "Content-Type":
+                    "text/plain;charset=utf-8"
+                },
+
+                body:
+                JSON.stringify(data)
+
+            }
+
+        );
+
+    }
+
+    catch(error){
+
+        console.error(
+            "Google Sheet error:",
+            error
+        );
+
+    }
+
+
+    /* ==============================
+       WHATSAPP MESSAGE
+    ============================== */
+
+    const message =
+
+`🏍️ *BIKE DOCTOR - NEW BOOKING*
+
+━━━━━━━━━━━━━━━━━━
+
+👤 *CUSTOMER*
+${data.name}
+
+📍 *PICKUP LOCATION*
+${data.locationType}
+
+📌 *ADDRESS + LANDMARK*
+${data.address}
+
+📱 *MOBILE*
+${data.phone}
+
+📱 *ALTERNATE MOBILE*
+${data.altPhone || "Not provided"}
+
+🙋 *PICKUP PERSON*
+${data.pickupName}
+
+👤 *RECEIVER*
+${data.receiverName}
+
+🕐 *PREFERRED TIME*
+${data.slot}
+
+🏍️ *BIKE MODEL*
+${data.bike}
+
+🧼 *SELECTED PLAN*
+${data.service}
+
+🚚 *PICKUP & DROP CHARGES*
+Up to 5 km - ₹20
+Up to 10 km - ₹35
+Up to 15 km - ₹50
+
+━━━━━━━━━━━━━━━━━━
+
+*BIKE DOCTOR*
+Your Bike. Our Care.`;
+
+
+    /* ==============================
+       WHATSAPP URL
+    ============================== */
+
+    const whatsappURL =
+    "https://wa.me/" +
+    WHATSAPP_NUMBER +
+    "?text=" +
+    encodeURIComponent(message);
+
+
+    /* ==============================
+       SUCCESS
+    ============================== */
+
+    loadingMessage.style.display = "none";
+
+    successMessage.style.display = "block";
+
+    submitButton.textContent =
+    "Booking Submitted ✓";
+
+
+    /* ==============================
+       OPEN WHATSAPP
+    ============================== */
+
+    setTimeout(function(){
+
+        window.open(
+            whatsappURL,
+            "_blank",
+            "noopener"
+        );
+
+    },500);
+
+
+    /* ==============================
+       RESET AFTER DELAY
+    ============================== */
+
+    setTimeout(function(){
+
+        form.reset();
+
+        submitButton.disabled = false;
+
+        submitButton.textContent =
+        "Confirm Booking →";
+
+        successMessage.style.display =
+        "none";
+
+    },2500);
+
+});
+
+</script>
+
+</body>
+</html>
