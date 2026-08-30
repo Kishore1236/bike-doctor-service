@@ -227,15 +227,27 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  padding: 18px 24px;
-  border: 2px solid rgba(220, 73, 73, 0.45);
-  border-radius: 14px;
-  background: rgba(255, 244, 244, 0.9);
-  color: #a61e1e;
-  font-size: 1.12rem;
+  gap: 12px;
+  padding: 14px 24px;
+  border: 1.5px solid #dadce0;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #3c4043;
+  font-size: 1rem;
   font-weight: 600;
-  cursor: not-allowed;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(60, 64, 67, 0.08);
+  transition: all 0.25s ease;
+}
+
+.google-signin-fallback:hover {
+  background: #f8f9fa;
+  border-color: #4285f4;
+  box-shadow: 0 4px 14px rgba(66, 133, 244, 0.15);
+}
+
+.google-svg-logo {
+  flex-shrink: 0;
 }
 
 .google-g {
