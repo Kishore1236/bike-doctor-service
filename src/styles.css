@@ -240,37 +240,31 @@ button {
   justify-content: center;
   gap: 14px;
   padding: 15px 24px;
-  border: 1.5px solid #4285f4;
+  border: 1.5px solid #1a73e8;
   border-radius: 14px;
-  background: #ffffff;
-  color: #3c4043;
+  background: #1a73e8;
+  color: #ffffff;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   font-size: 1.02rem;
   font-weight: 600;
   letter-spacing: 0.01em;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(66, 133, 244, 0.12);
+  box-shadow: 0 4px 14px rgba(26, 115, 232, 0.25);
   transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
   box-sizing: border-box;
 }
 
 .google-signin-btn:hover, .google-signin-fallback:hover {
-  background: linear-gradient(135deg, #4285f4 0%, #3367d6 100%);
+  background: #1557b0;
+  border-color: #1557b0;
   color: #ffffff;
-  border-color: #3367d6;
-  box-shadow: 0 8px 26px rgba(66, 133, 244, 0.38);
+  box-shadow: 0 8px 26px rgba(21, 87, 176, 0.4);
   transform: translateY(-2px);
-}
-
-.google-signin-btn:hover .google-icon-wrapper, .google-signin-fallback:hover .google-icon-wrapper {
-  background: #ffffff;
-  border-radius: 50%;
-  padding: 2px;
 }
 
 .google-signin-btn:active, .google-signin-fallback:active {
   transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(66, 133, 244, 0.15);
+  box-shadow: 0 2px 8px rgba(26, 115, 232, 0.2);
 }
 
 .google-icon-wrapper {
