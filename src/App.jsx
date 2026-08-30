@@ -272,8 +272,29 @@ function App() {
           {authError && <div className="auth-error">{authError}</div>}
 
           <div className="auth-divider">
-            <span>or explore instantly</span>
+            <span>or sign in directly</span>
           </div>
+
+          <button
+            type="button"
+            className="google-direct-signin-btn"
+            onClick={() => {
+              const email = prompt('Enter your Google email address:', 'kk863614@gmail.com');
+              if (email && email.trim()) {
+                const namePart = email.trim().split('@')[0];
+                const formattedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+                setUser({
+                  name: formattedName,
+                  email: email.trim(),
+                  picture: `https://api.dicebear.com/7.x/avataaars/svg?seed=${namePart}`,
+                });
+                setAuthError('');
+              }
+            }}
+          >
+            <span className="google-g-icon">G</span>
+            <span>Sign In with Any Google Account</span>
+          </button>
 
           <button
             type="button"
@@ -290,7 +311,7 @@ function App() {
             ⚡ Continue as Guest (Demo Mode)
           </button>
 
-          <div className="secure-copy">Secure authentication powered by Google</div>
+          <div className="secure-copy">Secure authentication powered by BikeDoctor</div>
         </div>
       </main>
     </div>
