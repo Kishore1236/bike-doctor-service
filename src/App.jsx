@@ -337,25 +337,6 @@ function App() {
           </div>
           {authError && <div className="auth-error">{authError}</div>}
 
-          <div className="auth-divider">
-            <span>or explore instant demo</span>
-          </div>
-
-          <button
-            type="button"
-            className="demo-signin-btn"
-            onClick={() => {
-              setUser({
-                name: 'Alex Rider',
-                email: 'alex.rider@example.com',
-                picture: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Alex',
-              });
-              setAuthError('');
-            }}
-          >
-            ⚡ Continue as Guest (Demo Mode)
-          </button>
-
           <div className="secure-copy">Secure authentication powered by BikeDoctor</div>
         </div>
       </main>
