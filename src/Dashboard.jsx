@@ -21,6 +21,12 @@ function Dashboard({ user, onSignOut, onNavigate, onActivateMembership, onBookSe
     setOpenFaq(openFaq === idx ? null : idx);
   };
 
+  const currentUser = user || {
+    name: 'Customer',
+    email: 'customer@bikedoctor.com',
+    picture: '',
+  };
+
   return (
     <div className="spa-layout">
       {/* NAVBAR */}
@@ -49,10 +55,10 @@ function Dashboard({ user, onSignOut, onNavigate, onActivateMembership, onBookSe
           </ul>
 
           <div className="nav-user">
-            {user.picture && <img src={user.picture} alt={user.name} className="nav-avatar" />}
+            {currentUser.picture && <img src={currentUser.picture} alt={currentUser.name || 'User'} className="nav-avatar" />}
             <div className="nav-user-text">
-              <div className="nav-username">{user.name}</div>
-              <div className="nav-useremail">{user.email}</div>
+              <div className="nav-username">{currentUser.name || 'Customer'}</div>
+              <div className="nav-useremail">{currentUser.email || ''}</div>
             </div>
             <button className="nav-signout" onClick={onSignOut} title="Sign out of your account">
               Sign out

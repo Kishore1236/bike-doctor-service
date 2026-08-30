@@ -1,7 +1,65 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { Component, useEffect, useRef, useState } from 'react';
 import Dashboard from './Dashboard';
 import MembershipPage from './MembershipPage';
 import BookingModal from './BookingModal';
+
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("ErrorBoundary caught an error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '24px',
+          background: '#f8f9ff',
+          fontFamily: 'system-ui, sans-serif',
+          textAlign: 'center'
+        }}>
+          <h2 style={{ fontSize: '1.8rem', color: '#1f2438', marginBottom: '12px' }}>Something went wrong</h2>
+          <p style={{ color: '#64748b', marginBottom: '24px', maxWidth: '400px' }}>
+            We encountered an unexpected error. Click below to reset your session and reload.
+          </p>
+          <button
+            onClick={() => {
+              localStorage.clear();
+              window.location.reload();
+            }}
+            style={{
+              background: '#4c52e9',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '12px',
+              padding: '14px 28px',
+              fontSize: '1rem',
+              fontWeight: 700,
+              cursor: 'pointer'
+            }}
+          >
+            🔄 Reset & Reload App
+          </button>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
 
 function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
   const [processing, setProcessing] = useState(false);
@@ -58,13 +116,15 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
 function App() {
   const googleButtonRef = useRef(null);
   const [user, setUser] = useState(() => {
-    // Restore user from localStorage on app load
     try {
       const stored = localStorage.getItem('bikeDoctor_user');
-      return stored ? JSON.parse(stored) : null;
+      if (stored && stored !== 'undefined' && stored !== 'null') {
+        return JSON.parse(stored);
+      }
     } catch {
       return null;
     }
+    return null;
   });
   const [authError, setAuthError] = useState('');
   const [currentPage, setCurrentPage] = useState('dashboard');
@@ -317,4 +377,10 @@ function App() {
   );
 }
 
-export default App;
+export default function RootApp() {
+  return (
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
+  );
+}
