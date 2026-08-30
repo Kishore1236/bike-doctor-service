@@ -188,7 +188,8 @@ function App() {
       if (googleButtonRef.current) {
         googleButtonRef.current.innerHTML = '';
         window.google.accounts.id.renderButton(googleButtonRef.current, {
-          theme: 'filled_blue',
+          theme: 'outline',
+          shape: 'pill',
           size: 'large',
           width: 350,
           text: 'signin_with',

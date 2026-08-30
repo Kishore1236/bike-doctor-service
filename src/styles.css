@@ -223,13 +223,13 @@ button {
 }
 
 .google-signin-wrapper iframe {
-  border-radius: 14px !important;
+  border-radius: 50px !important;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
   transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
 }
 
 .google-signin-wrapper iframe:hover {
-  box-shadow: 0 8px 24px rgba(66, 133, 244, 0.22) !important;
+  box-shadow: 0 8px 24px rgba(66, 133, 244, 0.35) !important;
   transform: translateY(-2px);
 }
 
@@ -239,27 +239,37 @@ button {
   align-items: center;
   justify-content: center;
   gap: 14px;
-  padding: 15px 24px;
-  border: 1.5px solid #1a73e8;
-  border-radius: 14px;
-  background: #1a73e8;
-  color: #ffffff;
+  padding: 15px 28px;
+  border: 1.5px solid #dadce0;
+  border-radius: 50px;
+  background: #ffffff;
+  color: #3c4043;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   font-size: 1.02rem;
   font-weight: 600;
   letter-spacing: 0.01em;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(26, 115, 232, 0.25);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
   transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
   box-sizing: border-box;
 }
 
 .google-signin-btn:hover, .google-signin-fallback:hover {
-  background: #1557b0;
+  background: linear-gradient(135deg, #1a73e8 0%, #1557b0 100%);
   border-color: #1557b0;
   color: #ffffff;
-  box-shadow: 0 8px 26px rgba(21, 87, 176, 0.4);
+  box-shadow: 0 8px 26px rgba(26, 115, 232, 0.38);
   transform: translateY(-2px);
+}
+
+.google-signin-btn:hover .google-btn-text, .google-signin-fallback:hover .google-btn-text {
+  color: #ffffff;
+}
+
+.google-signin-btn:hover .google-icon-wrapper, .google-signin-fallback:hover .google-icon-wrapper {
+  background: #ffffff;
+  border-radius: 50%;
+  padding: 2px;
 }
 
 .google-signin-btn:active, .google-signin-fallback:active {
