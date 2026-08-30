@@ -70,6 +70,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [selectedService, setSelectedService] = useState('Complete Service');
   const [bookingType, setBookingType] = useState('service');
+  const [bookingDetails, setBookingDetails] = useState(null);
   const [authReady, setAuthReady] = useState(false);
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
@@ -172,8 +173,6 @@ function App() {
         window.google.accounts.id.disableAutoSelect();
       }
     };
-
-    const [bookingDetails, setBookingDetails] = useState(null);
 
     const openServiceBooking = (serviceName = 'Complete Service') => {
       setSelectedService(serviceName);
