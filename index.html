@@ -13,7 +13,15 @@
       name="google-site-verification"
       content="google2083184c24cdc8d5"
     />
-    <!-- Vercel fresh build force refresh v1.0.2 -->
+    <!-- Vercel fresh build force refresh v1.0.5 -->
+    <script>
+      try {
+        if (localStorage.getItem('bd_v') !== '1.0.5') {
+          localStorage.removeItem('bikeDoctor_user');
+          localStorage.setItem('bd_v', '1.0.5');
+        }
+      } catch (e) {}
+    </script>
     <link rel="canonical" href="https://bikedoctor-three.vercel.app/" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Bike Doctor | Your Bike. Our Care." />
