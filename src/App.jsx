@@ -190,7 +190,7 @@ function App() {
         window.google.accounts.id.renderButton(googleButtonRef.current, {
           theme: 'outline',
           size: 'large',
-          width: '100%',
+          width: 350,
           text: 'signin_with',
           logo_alignment: 'left',
         });
