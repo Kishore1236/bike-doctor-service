@@ -32,10 +32,6 @@ function Dashboard({ user, onSignOut, onNavigate, onActivateMembership, onBookSe
       {/* NAVBAR */}
       <nav className="spa-navbar">
         <div className="nav-container">
-          <div className="nav-brand">
-            <img src="/logo.png" alt="BikeDoctor" className="nav-logo-img" />
-          </div>
-
           <button 
             className="mobile-menu-toggle" 
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -43,6 +39,10 @@ function Dashboard({ user, onSignOut, onNavigate, onActivateMembership, onBookSe
           >
             {mobileMenuOpen ? '✕' : '☰'}
           </button>
+
+          <div className="nav-brand">
+            <img src="/logo.png" alt="BikeDoctor" className="nav-logo-img" />
+          </div>
 
           <ul className={`nav-menu ${mobileMenuOpen ? 'open' : ''}`}>
             <li><a href="#services" onClick={() => setMobileMenuOpen(false)}>Services</a></li>

@@ -980,9 +980,12 @@ button {
 
 @media (max-width: 640px) {
   .nav-container {
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
     gap: 12px;
     padding: 12px 16px;
+    position: relative;
   }
 
   .nav-menu {
@@ -2431,7 +2434,11 @@ button {
   }
 
   .mobile-menu-toggle {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    order: -1;
+    margin-right: 8px;
   }
 
   .nav-menu {
