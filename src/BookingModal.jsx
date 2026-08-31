@@ -66,7 +66,7 @@ function BookingModal({ isOpen, onClose, selectedService = 'Complete Service', b
     e.preventDefault();
     setSubmitting(true);
 
-    const scriptUrl = import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbxo6G9kHuFoehKhQX4OjuXdqWP9gBgdzZtetVUIegfZxsoHz1MsL3NYSpvPZ5ffdhjewg/exec';
+    const scriptUrl = import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz-7FfKmE6FgZGxs75wMK-QuFuP97U915UAy9Ukeo5JxlgqwYoevb25RQKHFFZkunjw/exec';
 
     const planDisplayName = effectivePlan === 'Monthly Subscription' ? 'Monthly Bike Care' : effectivePlan;
     const fullPlanLabel = `${planDisplayName} - ₹${planDetails.price}`;

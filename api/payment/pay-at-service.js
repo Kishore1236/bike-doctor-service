@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     const formattedAmount = bookingDetails?.totalAmount || '₹319';
 
     // Submit confirmed Pay at Service record to Google Sheets
-    const scriptUrl = process.env.GOOGLE_SCRIPT_URL || process.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbxo6G9kHuFoehKhQX4OjuXdqWP9gBgdzZtetVUIegfZxsoHz1MsL3NYSpvPZ5ffdhjewg/exec';
+    const scriptUrl = process.env.GOOGLE_SCRIPT_URL || process.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz-7FfKmE6FgZGxs75wMK-QuFuP97U915UAy9Ukeo5JxlgqwYoevb25RQKHFFZkunjw/exec';
 
     if (scriptUrl) {
       const payload = {
