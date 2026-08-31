@@ -2,7 +2,7 @@ import { services, membership, plans, reasons, steps, faqs, charges } from './da
 import { useState } from 'react';
 import BookingModal from './BookingModal';
 
-function Dashboard({ user, onSignOut, onNavigate, onActivateMembership, onBookService }) {
+function Dashboard({ user, onSignOut, onNavigate, onActivateMembership, onBookService, onOpenMyBookings }) {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [modalService, setModalService] = useState('Complete Service');
   const [openFaq, setOpenFaq] = useState(null);
@@ -51,6 +51,18 @@ function Dashboard({ user, onSignOut, onNavigate, onActivateMembership, onBookSe
             <li><a href="#why-us" onClick={() => setMobileMenuOpen(false)}>Why Us</a></li>
             <li><a href="#faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a></li>
             <li><a href="#contact" onClick={() => setMobileMenuOpen(false)}>Contact</a></li>
+            <li>
+              <button 
+                type="button"
+                className="nav-my-bookings-link"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  if (onOpenMyBookings) onOpenMyBookings();
+                }}
+              >
+                📋 My Bookings
+              </button>
+            </li>
           </ul>
 
           <div className="nav-user">

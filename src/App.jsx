@@ -2,6 +2,8 @@ import React, { Component, useEffect, useRef, useState } from 'react';
 import Dashboard from './Dashboard';
 import MembershipPage from './MembershipPage';
 import BookingModal from './BookingModal';
+import ConfirmationModal from './ConfirmationModal';
+import MyBookingsModal from './MyBookingsModal';
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -158,9 +160,27 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
             const verifyData = await verifyRes.json();
 
             if (verifyRes.ok && verifyData.success) {
-              alert(`Booking Confirmed! 🎉\n\nBooking ID: ${verifyData.bookingId}\nAmount: ${displayTotal}\nStatus: PAID\n\nDetails saved to dispatch queue.`);
+              const record = {
+                bookingId: verifyData.bookingId || `BK${Date.now().toString().slice(-6)}`,
+                totalAmount: displayTotal,
+                amount: displayTotal,
+                planName,
+                plan: planName,
+                serviceName: displayService,
+                service: displayService,
+                bikeModel: bookingDetails?.bikeModel || 'Bike Service',
+                timeSlot: bookingDetails?.timeSlot || '09:00 AM - 11:00 AM',
+                name: bookingDetails?.name || bookingDetails?.pickupPerson || 'Customer',
+                customerName: bookingDetails?.name || bookingDetails?.pickupPerson || 'Customer',
+                phone: bookingDetails?.mobile || bookingDetails?.phone || '',
+                location: bookingDetails?.landmark || bookingDetails?.location || '',
+                paymentMethod: `Pay Online (${paymentMethod.toUpperCase()})`,
+                paymentStatus: 'PAID',
+                createdAt: new Date().toLocaleString(),
+                timestamp: new Date().toLocaleString(),
+              };
               setProcessing(false);
-              onComplete();
+              onComplete(record);
             } else {
               setErrorMsg(verifyData.message || 'Payment signature verification failed on backend server.');
               setProcessing(false);
@@ -205,6 +225,8 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
       serviceName: displayService,
     };
 
+    let bookingId = `BK${Date.now().toString().slice(-6)}${Math.floor(1000 + Math.random() * 9000)}`;
+
     try {
       const res = await fetch(`${apiUrl}/api/payment/pay-at-service`, {
         method: 'POST',
@@ -213,26 +235,35 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
       });
 
       const data = await res.json();
-
-      if (res.ok && data.success) {
-        alert(
-          `Booking Confirmed! 🎉\n\nBooking ID: ${data.bookingId}\nAmount: ${displayTotal}\nPayment Method: Pay at Service\nPayment Status: Pending\n\nPlease pay the service provider directly when the service is completed.`
-        );
-        setProcessing(false);
-        onComplete();
-      } else {
-        throw new Error(data.message || 'Failed to confirm Pay at Service booking.');
+      if (res.ok && data.success && data.bookingId) {
+        bookingId = data.bookingId;
       }
     } catch (err) {
       console.warn('Pay at Service API notice:', err.message);
-      // Fallback local booking confirmation if endpoint unreachable
-      const bookingId = `BK${Date.now().toString().slice(-6)}${Math.floor(1000 + Math.random() * 9000)}`;
-      alert(
-        `Booking Confirmed! 🎉\n\nBooking ID: ${bookingId}\nAmount: ${displayTotal}\nPayment Method: Pay at Service\nPayment Status: Pending\n\nPlease pay the service provider directly when the service is completed.`
-      );
-      setProcessing(false);
-      onComplete();
     }
+
+    const record = {
+      bookingId,
+      totalAmount: displayTotal,
+      amount: displayTotal,
+      planName,
+      plan: planName,
+      serviceName: displayService,
+      service: displayService,
+      bikeModel: bookingDetails?.bikeModel || 'Bike Service',
+      timeSlot: bookingDetails?.timeSlot || '09:00 AM - 11:00 AM',
+      name: bookingDetails?.name || bookingDetails?.pickupPerson || 'Customer',
+      customerName: bookingDetails?.name || bookingDetails?.pickupPerson || 'Customer',
+      phone: bookingDetails?.mobile || bookingDetails?.phone || '',
+      location: bookingDetails?.landmark || bookingDetails?.location || '',
+      paymentMethod: 'Pay at Service',
+      paymentStatus: 'Pending',
+      createdAt: new Date().toLocaleString(),
+      timestamp: new Date().toLocaleString(),
+    };
+
+    setProcessing(false);
+    onComplete(record);
   };
 
   const handleConfirmAction = () => {
@@ -386,6 +417,27 @@ function App() {
   const [bookingType, setBookingType] = useState('service');
   const [bookingDetails, setBookingDetails] = useState(null);
   const [authReady, setAuthReady] = useState(false);
+
+  const [confirmationBooking, setConfirmationBooking] = useState(null);
+  const [isMyBookingsOpen, setIsMyBookingsOpen] = useState(false);
+  const [bookingsHistory, setBookingsHistory] = useState(() => {
+    try {
+      const stored = localStorage.getItem('bikeDoctor_history');
+      if (stored) return JSON.parse(stored);
+    } catch (e) {}
+    return [];
+  });
+
+  const addBookingToHistory = (newBooking) => {
+    setBookingsHistory((prev) => {
+      const updated = [newBooking, ...prev];
+      try {
+        localStorage.setItem('bikeDoctor_history', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+  };
+
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || '979562784305-qv4cn7nkbs9evd9b6d3dg1okvd96qmsj.apps.googleusercontent.com';
 
   const channels = [
@@ -508,40 +560,93 @@ function App() {
 
     if (currentPage === 'booking') {
       return (
-        <BookingModal
-          isOpen={true}
-          selectedService={selectedService}
-          onClose={() => setCurrentPage('dashboard')}
-          onProceedToPayment={(details) => {
-            setBookingDetails(details);
-            setCurrentPage('payment');
-          }}
-        />
+        <>
+          <BookingModal
+            isOpen={true}
+            selectedService={selectedService}
+            onClose={() => setCurrentPage('dashboard')}
+            onProceedToPayment={(details) => {
+              setBookingDetails(details);
+              setCurrentPage('payment');
+            }}
+          />
+          <ConfirmationModal
+            isOpen={!!confirmationBooking}
+            booking={confirmationBooking}
+            onClose={() => setConfirmationBooking(null)}
+            onViewMyBookings={() => {
+              setConfirmationBooking(null);
+              setIsMyBookingsOpen(true);
+            }}
+          />
+          <MyBookingsModal
+            isOpen={isMyBookingsOpen}
+            onClose={() => setIsMyBookingsOpen(false)}
+            bookings={bookingsHistory}
+          />
+        </>
       );
     }
 
     if (currentPage === 'payment') {
       return (
-        <PaymentPage
-          selectedService={selectedService}
-          bookingDetails={bookingDetails}
-          onBack={() => setCurrentPage('booking')}
-          onComplete={() => {
-            setCurrentPage('dashboard');
-            setBookingType('service');
-            setBookingDetails(null);
-          }}
-        />
+        <>
+          <PaymentPage
+            selectedService={selectedService}
+            bookingDetails={bookingDetails}
+            onBack={() => setCurrentPage('booking')}
+            onComplete={(confirmedRecord) => {
+              if (confirmedRecord) {
+                addBookingToHistory(confirmedRecord);
+                setConfirmationBooking(confirmedRecord);
+              }
+              setCurrentPage('dashboard');
+              setBookingType('service');
+              setBookingDetails(null);
+            }}
+          />
+          <ConfirmationModal
+            isOpen={!!confirmationBooking}
+            booking={confirmationBooking}
+            onClose={() => setConfirmationBooking(null)}
+            onViewMyBookings={() => {
+              setConfirmationBooking(null);
+              setIsMyBookingsOpen(true);
+            }}
+          />
+          <MyBookingsModal
+            isOpen={isMyBookingsOpen}
+            onClose={() => setIsMyBookingsOpen(false)}
+            bookings={bookingsHistory}
+          />
+        </>
       );
     }
 
     return (
-      <Dashboard 
-        user={user} 
-        onSignOut={handleSignOut} 
-        onNavigate={(page) => setCurrentPage(page)}
-        onBookService={openServiceBooking}
-      />
+      <>
+        <Dashboard 
+          user={user} 
+          onSignOut={handleSignOut} 
+          onNavigate={(page) => setCurrentPage(page)}
+          onBookService={openServiceBooking}
+          onOpenMyBookings={() => setIsMyBookingsOpen(true)}
+        />
+        <ConfirmationModal
+          isOpen={!!confirmationBooking}
+          booking={confirmationBooking}
+          onClose={() => setConfirmationBooking(null)}
+          onViewMyBookings={() => {
+            setConfirmationBooking(null);
+            setIsMyBookingsOpen(true);
+          }}
+        />
+        <MyBookingsModal
+          isOpen={isMyBookingsOpen}
+          onClose={() => setIsMyBookingsOpen(false)}
+          bookings={bookingsHistory}
+        />
+      </>
     );
   }
 
