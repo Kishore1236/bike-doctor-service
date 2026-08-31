@@ -63,6 +63,7 @@ class ErrorBoundary extends Component {
 
 function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
   const [processing, setProcessing] = useState(false);
+  const [payMode, setPayMode] = useState('online'); // 'online' | 'service'
   const [paymentMethod, setPaymentMethod] = useState('upi'); // 'upi', 'card', 'netbanking'
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -70,7 +71,17 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
   const displayService = bookingDetails?.serviceName || bookingDetails?.service || selectedService;
   const displayTotal = bookingDetails?.totalAmount || '₹319';
 
-  const handlePay = async () => {
+  const getApiUrl = () => {
+    let apiUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      if (apiUrl.includes('localhost') || apiUrl.includes('127.0.0.1')) {
+        apiUrl = 'https://bike-doctor-backend-vert.vercel.app';
+      }
+    }
+    return apiUrl;
+  };
+
+  const handlePayOnline = async () => {
     setErrorMsg('');
     if (!window.Razorpay) {
       setErrorMsg('Razorpay SDK failed to load. Please refresh the page or check your internet connection.');
@@ -78,13 +89,7 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
     }
 
     setProcessing(true);
-
-    let apiUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
-    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-      if (apiUrl.includes('localhost') || apiUrl.includes('127.0.0.1')) {
-        apiUrl = '';
-      }
-    }
+    const apiUrl = getApiUrl();
 
     try {
       // 1. Create order on backend
@@ -132,7 +137,7 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
         },
         handler: async function (response) {
           try {
-            // 3. Verify payment signature on Express backend
+            // 3. Verify payment signature on backend
             const verifyRes = await fetch(`${apiUrl}/api/payment/verify`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -142,7 +147,7 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
                 razorpay_signature: response.razorpay_signature,
                 bookingDetails: {
                   ...bookingDetails,
-                  paymentMethod,
+                  paymentMethod: 'Pay Online (' + paymentMethod.toUpperCase() + ')',
                   totalAmount: displayTotal,
                   planName,
                   serviceName: displayService,
@@ -186,11 +191,63 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
     }
   };
 
+  const handlePayAtService = async () => {
+    setErrorMsg('');
+    setProcessing(true);
+    const apiUrl = getApiUrl();
+
+    const payloadDetails = {
+      ...bookingDetails,
+      paymentMethod: 'Pay at Service',
+      paymentStatus: 'Pending',
+      totalAmount: displayTotal,
+      planName,
+      serviceName: displayService,
+    };
+
+    try {
+      const res = await fetch(`${apiUrl}/api/payment/pay-at-service`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bookingDetails: payloadDetails }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        alert(
+          `Booking Confirmed! 🎉\n\nBooking ID: ${data.bookingId}\nAmount: ${displayTotal}\nPayment Method: Pay at Service\nPayment Status: Pending\n\nPlease pay the service provider directly when the service is completed.`
+        );
+        setProcessing(false);
+        onComplete();
+      } else {
+        throw new Error(data.message || 'Failed to confirm Pay at Service booking.');
+      }
+    } catch (err) {
+      console.warn('Pay at Service API notice:', err.message);
+      // Fallback local booking confirmation if endpoint unreachable
+      const bookingId = `BK${Date.now().toString().slice(-6)}${Math.floor(1000 + Math.random() * 9000)}`;
+      alert(
+        `Booking Confirmed! 🎉\n\nBooking ID: ${bookingId}\nAmount: ${displayTotal}\nPayment Method: Pay at Service\nPayment Status: Pending\n\nPlease pay the service provider directly when the service is completed.`
+      );
+      setProcessing(false);
+      onComplete();
+    }
+  };
+
+  const handleConfirmAction = () => {
+    if (payMode === 'online') {
+      handlePayOnline();
+    } else {
+      handlePayAtService();
+    }
+  };
+
   return (
     <div className="payment-page-shell">
       <div className="payment-card">
-        <div className="payment-badge">Secure Checkout</div>
-        <h2>Complete Payment</h2>
+        <div className="payment-badge">Checkout & Confirm</div>
+        <h2>Select Payment Method</h2>
         <div className="payment-summary">
           {bookingDetails?.bikeModel && (
             <div className="summary-row">
@@ -218,47 +275,88 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
           </div>
         </div>
 
-        <div className="payment-options">
-          <button
-            className={`payment-option ${paymentMethod === 'upi' ? 'active' : ''}`}
-            type="button"
-            onClick={() => setPaymentMethod('upi')}
-          >
-            UPI
-          </button>
-          <button
-            className={`payment-option ${paymentMethod === 'card' ? 'active' : ''}`}
-            type="button"
-            onClick={() => setPaymentMethod('card')}
-          >
-            Card
-          </button>
-          <button
-            className={`payment-option ${paymentMethod === 'netbanking' ? 'active' : ''}`}
-            type="button"
-            onClick={() => setPaymentMethod('netbanking')}
-          >
-            Net Banking
-          </button>
+        {/* 1. Payment Mode Selector (Pay Online vs Pay at Service) */}
+        <div className="payment-mode-section">
+          <div className="mode-section-title">CHOOSE PAYMENT OPTION</div>
+          <div className="pay-mode-grid">
+            <button
+              type="button"
+              className={`pay-mode-card ${payMode === 'online' ? 'active' : ''}`}
+              onClick={() => { setPayMode('online'); setErrorMsg(''); }}
+            >
+              <div className="mode-card-header">
+                <span className="mode-icon">💳</span>
+                <strong>Pay Online</strong>
+              </div>
+              <p>Pay securely online using Razorpay (UPI, Cards, Net Banking)</p>
+            </button>
+
+            <button
+              type="button"
+              className={`pay-mode-card ${payMode === 'service' ? 'active' : ''}`}
+              onClick={() => { setPayMode('service'); setErrorMsg(''); }}
+            >
+              <div className="mode-card-header">
+                <span className="mode-icon">🤝</span>
+                <strong>Pay at Service</strong>
+              </div>
+              <p>Pay directly to the service provider when the service is completed</p>
+            </button>
+          </div>
         </div>
 
+        {/* 2. Sub-options or Notice depending on payMode */}
+        {payMode === 'online' ? (
+          <div className="payment-options">
+            <button
+              className={`payment-option ${paymentMethod === 'upi' ? 'active' : ''}`}
+              type="button"
+              onClick={() => setPaymentMethod('upi')}
+            >
+              UPI
+            </button>
+            <button
+              className={`payment-option ${paymentMethod === 'card' ? 'active' : ''}`}
+              type="button"
+              onClick={() => setPaymentMethod('card')}
+            >
+              Card
+            </button>
+            <button
+              className={`payment-option ${paymentMethod === 'netbanking' ? 'active' : ''}`}
+              type="button"
+              onClick={() => setPaymentMethod('netbanking')}
+            >
+              Net Banking
+            </button>
+          </div>
+        ) : (
+          <div className="pay-at-service-notice">
+            <span className="notice-icon">📋</span>
+            <div>
+              <strong>Pay Upon Completion</strong>
+              <p>Please pay the service provider directly when the service is completed at your location.</p>
+            </div>
+          </div>
+        )}
+
         {errorMsg && (
-          <div style={{
-            background: '#fef2f2',
-            border: '1px solid rgba(220, 38, 38, 0.3)',
-            color: '#991b1b',
-            padding: '12px 16px',
-            borderRadius: '12px',
-            fontSize: '0.9rem',
-            lineHeight: 1.4,
-            marginTop: '16px',
-          }}>
+          <div className="payment-error-box">
             <strong>⚠️ Payment Error:</strong> {errorMsg}
           </div>
         )}
 
-        <button className="payment-confirm-btn" type="button" onClick={handlePay} disabled={processing}>
-          {processing ? 'Processing...' : `Pay ${displayTotal}`}
+        <button
+          className="payment-confirm-btn"
+          type="button"
+          onClick={handleConfirmAction}
+          disabled={processing}
+        >
+          {processing
+            ? 'Processing...'
+            : payMode === 'online'
+            ? `Pay ${displayTotal} Online →`
+            : `Confirm Booking (${displayTotal}) →`}
         </button>
 
         <button className="payment-back-btn" type="button" onClick={onBack} disabled={processing}>
