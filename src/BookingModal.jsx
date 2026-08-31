@@ -281,19 +281,6 @@ function BookingModal({ isOpen, onClose, selectedService = 'Complete Service', b
               )}
             </div>
 
-            {!isMonthlySubscription && (
-              <div className="service-selected">
-                <label>SELECTED SERVICE</label>
-                <div className="service-picker-box">
-                  <select value={currentService} onChange={(e) => setCurrentService(e.target.value)}>
-                    <option value="Complete Service">Complete Service Package</option>
-                    {services.map((srv) => (
-                      <option key={srv.title} value={srv.title}>{srv.icon} {srv.title}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            )}
 
             <div className="booking-info">
               <div className="info-item">
