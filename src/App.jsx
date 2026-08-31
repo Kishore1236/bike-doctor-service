@@ -79,7 +79,12 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
 
     setProcessing(true);
 
-    const apiUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+    let apiUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      if (apiUrl.includes('localhost') || apiUrl.includes('127.0.0.1')) {
+        apiUrl = '';
+      }
+    }
 
     try {
       // 1. Create order on backend
