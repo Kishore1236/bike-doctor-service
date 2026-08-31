@@ -1,12 +1,12 @@
 :root {
-  --primary-1: #4c52e9;
-  --primary-2: #7745ec;
-  --primary-3: #8a4bdb;
+  --primary-1: #dc2626;
+  --primary-2: #ef4444;
+  --primary-3: #b91c1c;
   --text-dark: #1f2230;
   --text-mid: #5a647a;
-  --panel-light: #f4f5f7;
-  --card-light: #f7f7f8;
-  --card-outline: rgba(130, 137, 180, 0.18);
+  --panel-light: #fef2f2;
+  --card-light: #fcf8f8;
+  --card-outline: rgba(220, 38, 38, 0.15);
   --white: #ffffff;
 }
 
@@ -31,7 +31,7 @@ html {
 
 body {
   padding: 0;
-  background: #f8f9fc;
+  background: #fdf8f8;
   color: var(--text-dark);
   font-family: 'Inter', Arial, sans-serif;
   overflow-x: hidden;
@@ -56,7 +56,7 @@ button {
 }
 
 .auth-hero {
-  background: linear-gradient(135deg, #3e4fe7 0%, #4f54eb 20%, #6c4fe8 62%, #8f4ce8 100%);
+  background: linear-gradient(135deg, #dc2626 0%, #e11d48 20%, #be123c 62%, #991b1b 100%);
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -71,10 +71,18 @@ button {
   align-items: center;
   gap: 16px;
   width: fit-content;
-  padding: 12px 22px 12px 16px;
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 20px;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+}
+
+.brand-logo-img {
+  height: 44px;
+  width: auto;
+  max-width: 200px;
+  object-fit: contain;
+  border-radius: 10px;
 }
 
 .brand-cloud {
@@ -165,131 +173,137 @@ button {
 
 .auth-card {
   width: 100%;
-  max-width: 500px;
-  background: rgba(255, 255, 255, 0.94);
-  border: 1.5px solid var(--card-outline);
-  border-radius: 28px;
-  padding: 44px 38px;
-  box-shadow: 0 24px 60px rgba(31, 34, 48, 0.1);
+  max-width: 440px;
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  border-radius: 20px;
+  padding: 40px 32px;
+  box-shadow: 0 16px 40px -8px rgba(15, 23, 42, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02);
   text-align: center;
   box-sizing: border-box;
 }
 
 .auth-card-icon {
-  width: 96px;
-  height: 96px;
-  display: grid;
-  place-items: center;
-  margin: 0 auto 24px;
-  border-radius: 24px;
-  background: linear-gradient(135deg, #5a52eb 0%, #7a3de6 100%);
-  color: #fff;
-  font-size: 2.8rem;
-  box-shadow: 0 18px 32px rgba(92, 93, 233, 0.22);
+  width: 140px;
+  height: auto;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  border-radius: 14px;
+  background: #ffffff;
+  padding: 8px 14px;
+  box-shadow: 0 8px 20px rgba(220, 38, 38, 0.12);
+  border: 1px solid rgba(220, 38, 38, 0.15);
+}
+
+.auth-card-logo-img {
+  width: 100%;
+  height: auto;
+  max-height: 52px;
+  object-fit: contain;
+}
+
+.nav-logo-img {
+  height: 42px;
+  width: auto;
+  object-fit: contain;
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 4px 10px;
+  border: 1px solid rgba(220, 38, 38, 0.12);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.modal-header-logo-img {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 4px 8px;
+}
+
+.service-card-logo-img {
+  width: 100%;
+  height: auto;
+  max-height: 36px;
+  object-fit: contain;
 }
 
 .auth-card h2 {
-  font-size: 2.4rem;
-  line-height: 1.15;
-  letter-spacing: -0.05em;
+  font-size: 2.1rem;
+  line-height: 1.2;
+  letter-spacing: -0.04em;
   font-weight: 800;
   color: var(--text-dark);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .auth-card p {
   max-width: 100%;
-  margin: 12px auto 0;
-  font-size: 1.12rem;
-  line-height: 1.6;
+  margin: 10px auto 0;
+  font-size: 1.02rem;
+  line-height: 1.55;
   color: var(--text-mid);
 }
 
 .google-signin-wrapper {
-  margin-top: 28px;
+  margin-top: 24px;
   width: 100%;
   display: flex;
   justify-content: center;
-}
-
-.google-signin-wrapper.error-mode {
-  margin-top: 20px;
+  align-items: center;
 }
 
 .google-signin-wrapper > div {
-  width: 100% !important;
   display: flex;
   justify-content: center;
+  width: 100%;
 }
 
 .google-signin-wrapper iframe {
-  border-radius: 50px !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
-  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 .google-signin-wrapper iframe:hover {
-  box-shadow: 0 8px 24px rgba(66, 133, 244, 0.35) !important;
-  transform: translateY(-2px);
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2) !important;
 }
 
-.google-signin-btn, .google-signin-fallback {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  padding: 15px 28px;
-  border: 1.5px solid #dadce0;
-  border-radius: 50px;
-  background: #ffffff;
-  color: #3c4043;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  font-size: 1.02rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  cursor: pointer;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
-  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
-  box-sizing: border-box;
-}
-
-.google-signin-btn:hover, .google-signin-fallback:hover {
-  background: linear-gradient(135deg, #1a73e8 0%, #1557b0 100%);
-  border-color: #1557b0;
+.google-btn-text {
   color: #ffffff;
-  box-shadow: 0 8px 26px rgba(26, 115, 232, 0.38);
-  transform: translateY(-2px);
+  font-weight: 700;
+  font-size: 1.12rem;
 }
 
 .google-signin-btn:hover .google-btn-text, .google-signin-fallback:hover .google-btn-text {
   color: #ffffff;
 }
 
-.google-signin-btn:hover .google-icon-wrapper, .google-signin-fallback:hover .google-icon-wrapper {
-  background: #ffffff;
-  border-radius: 50%;
-  padding: 2px;
-}
-
-.google-signin-btn:active, .google-signin-fallback:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(26, 115, 232, 0.2);
-}
-
 .google-icon-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 38px;
+  height: 38px;
+  background: #ffffff;
   border-radius: 50%;
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
+  transition: transform 0.2s ease;
+}
+
+.google-signin-btn:hover .google-icon-wrapper, .google-signin-fallback:hover .google-icon-wrapper {
+  transform: scale(1.05);
 }
 
 .google-svg-logo {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   flex-shrink: 0;
 }
 
@@ -322,9 +336,9 @@ button {
   align-items: center;
   gap: 12px;
   padding: 16px;
-  border: 1px solid rgba(77, 111, 248, 0.2);
+  border: 1px solid rgba(220, 38, 38, 0.2);
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .user-avatar {
@@ -347,12 +361,19 @@ button {
 
 .signout-button {
   margin-top: 8px;
-  border: 1px solid rgba(77, 111, 248, 0.45);
+  border: 1px solid rgba(220, 38, 38, 0.45);
   border-radius: 10px;
   background: #fff;
-  color: var(--text-dark);
+  color: var(--primary-1);
   padding: 10px 16px;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.signout-button:hover {
+  background: var(--primary-1);
+  color: #fff;
 }
 
 .secure-copy {
@@ -384,7 +405,7 @@ button {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f8f9fc;
+  background: #fdf8f8;
   margin: 0;
   padding: 0;
 }
@@ -392,7 +413,7 @@ button {
 /* ============= NAVBAR ============= */
 .spa-navbar {
   background: #fff;
-  border-bottom: 1px solid rgba(130, 137, 180, 0.12);
+  border-bottom: 1px solid rgba(220, 38, 38, 0.12);
   box-shadow: 0 2px 8px rgba(31, 34, 48, 0.04);
   position: sticky;
   top: 0;
@@ -547,7 +568,7 @@ button {
 
 .plan-card-saas {
   background: #fff;
-  border: 2px solid rgba(130, 137, 180, 0.12);
+  border: 2px solid rgba(220, 38, 38, 0.12);
   border-radius: 16px;
   padding: clamp(32px, 5vw, 44px) clamp(28px, 4vw, 36px);
   position: relative;
@@ -556,13 +577,13 @@ button {
 
 .plan-card-saas:hover {
   transform: translateY(-8px);
-  border-color: rgba(76, 82, 233, 0.25);
-  box-shadow: 0 20px 40px rgba(76, 82, 233, 0.15);
+  border-color: rgba(220, 38, 38, 0.25);
+  box-shadow: 0 20px 40px rgba(220, 38, 38, 0.15);
 }
 
 .plan-card-saas.featured {
   border: 2px solid var(--primary-1);
-  background: linear-gradient(135deg, rgba(76, 82, 233, 0.06) 0%, rgba(143, 76, 232, 0.03) 100%);
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.06) 0%, rgba(239, 68, 68, 0.03) 100%);
 }
 
 .plan-card-saas.featured:hover {
@@ -571,15 +592,15 @@ button {
 
 .plan-card-saas.monthly-highlight {
   border: 2.5px solid var(--primary-1);
-  background: linear-gradient(135deg, rgba(76, 82, 233, 0.12) 0%, rgba(143, 76, 232, 0.08) 100%);
-  box-shadow: 0 24px 50px rgba(76, 82, 233, 0.25);
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.12) 0%, rgba(239, 68, 68, 0.08) 100%);
+  box-shadow: 0 24px 50px rgba(220, 38, 38, 0.22);
   padding: clamp(40px, 6vw, 52px) clamp(32px, 5vw, 42px);
   min-height: 480px;
 }
 
 .plan-card-saas.monthly-highlight:hover {
   transform: translateY(-8px);
-  box-shadow: 0 30px 60px rgba(76, 82, 233, 0.32);
+  box-shadow: 0 30px 60px rgba(220, 38, 38, 0.3);
 }
 
 .plan-tag-saas {
@@ -595,7 +616,7 @@ button {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  box-shadow: 0 4px 12px rgba(76, 82, 233, 0.3);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
 }
 
 .plan-head {
@@ -648,7 +669,7 @@ button {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: rgba(76, 82, 233, 0.12);
+  background: rgba(220, 38, 38, 0.12);
   color: var(--primary-1);
   font-size: 0.75rem;
   font-weight: 900;
@@ -673,13 +694,13 @@ button {
 
 .plan-btn-saas.primary:hover {
   transform: scale(1.02);
-  box-shadow: 0 12px 28px rgba(76, 82, 233, 0.35);
+  box-shadow: 0 12px 28px rgba(220, 38, 38, 0.35);
 }
 
 .plan-btn-saas.secondary {
   background: var(--card-light);
   color: var(--primary-1);
-  border: 1.5px solid rgba(76, 82, 233, 0.2);
+  border: 1.5px solid rgba(220, 38, 38, 0.2);
 }
 
 .plan-btn-saas.secondary:hover {
@@ -695,7 +716,12 @@ button {
 .membership-card-saas {
   max-width: 900px;
   margin: 0 auto;
-  background: linear-gradient(135deg, #3e4fe7 0%, #4f54eb 20%, #6c4fe8 62%, #8f4ce8 100%);
+  background: linear-gradient(135deg, #dc2626 0%, #e11d48 20%, #be123c 62%, #991b1b 100%);
+  color: #fff;
+  border-radius: 20px;
+  padding: 48px 40px;
+  text-align: center;
+  box-shadow: 0 24px 48px rgba(220, 38, 38, 0.28);
   color: #fff;
   border-radius: 20px;
   padding: 48px 40px;
@@ -1023,7 +1049,7 @@ button {
 
 .services-card {
   background: #fff;
-  border: 1.5px solid rgba(130, 137, 180, 0.12);
+  border: 1.5px solid rgba(220, 38, 38, 0.12);
   border-radius: 16px;
   padding: 40px;
   box-shadow: 0 4px 16px rgba(31, 34, 48, 0.06);
@@ -1031,8 +1057,8 @@ button {
 }
 
 .services-card:hover {
-  border-color: rgba(76, 82, 233, 0.25);
-  box-shadow: 0 16px 40px rgba(76, 82, 233, 0.15);
+  border-color: rgba(220, 38, 38, 0.25);
+  box-shadow: 0 16px 40px rgba(220, 38, 38, 0.15);
 }
 
 .services-header {
@@ -1062,7 +1088,7 @@ button {
 .services-divider {
   width: 120px;
   height: 3px;
-  background: linear-gradient(90deg, rgba(76, 82, 233, 0.7), rgba(76, 82, 233, 0.18));
+  background: linear-gradient(90deg, rgba(220, 38, 38, 0.7), rgba(220, 38, 38, 0.18));
   border-radius: 999px;
   margin: 18px auto 0;
 }
@@ -1084,8 +1110,8 @@ button {
   gap: 18px;
   padding: 28px 24px;
   border-radius: 16px;
-  background: linear-gradient(180deg, rgba(248, 249, 255, 1) 0%, rgba(245, 247, 255, 1) 100%);
-  border: 1.5px solid rgba(130, 137, 180, 0.12);
+  background: linear-gradient(180deg, rgba(254, 242, 242, 1) 0%, rgba(253, 242, 242, 1) 100%);
+  border: 1.5px solid rgba(220, 38, 38, 0.12);
   transition: all 0.25s ease;
   box-sizing: border-box;
 }
@@ -1093,8 +1119,8 @@ button {
 .service-item:hover {
   background: #fff;
   transform: translateY(-3px);
-  border-color: rgba(76, 82, 233, 0.25);
-  box-shadow: 0 12px 28px rgba(76, 82, 233, 0.08);
+  border-color: rgba(220, 38, 38, 0.25);
+  box-shadow: 0 12px 28px rgba(220, 38, 38, 0.08);
 }
 
 .item-icon-box {
@@ -1102,7 +1128,7 @@ button {
   place-items: center;
   width: clamp(56px, 8vw, 64px);
   height: clamp(56px, 8vw, 64px);
-  border: 1px solid rgba(76, 82, 233, 0.2);
+  border: 1px solid rgba(220, 38, 38, 0.2);
   border-radius: 10px;
   background: #fff;
   color: var(--primary-1);
@@ -1146,7 +1172,7 @@ button {
 
 .services-book-btn:hover {
   transform: scale(1.02);
-  box-shadow: 0 12px 28px rgba(76, 82, 233, 0.35);
+  box-shadow: 0 12px 28px rgba(220, 38, 38, 0.35);
 }
 
 /* ============= MEMBERSHIP CTA ============= */
@@ -1159,11 +1185,11 @@ button {
   max-width: 1200px;
   min-height: 400px;
   margin: 0 auto;
-  background: linear-gradient(135deg, #3e4fe7 0%, #4f54eb 20%, #6c4fe8 62%, #8f4ce8 100%);
+  background: linear-gradient(135deg, #dc2626 0%, #e11d48 20%, #be123c 62%, #991b1b 100%);
   color: #fff;
   border-radius: 28px;
   padding: clamp(52px, 8vw, 68px) clamp(32px, 6vw, 56px);
-  box-shadow: 0 30px 60px rgba(79, 84, 235, 0.32);
+  box-shadow: 0 30px 60px rgba(220, 38, 38, 0.32);
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
@@ -1285,9 +1311,9 @@ button {
   max-height: 92vh;
   overflow-y: auto;
   border-radius: 28px;
-  background: linear-gradient(180deg, #ffffff 0%, #f5f7ff 100%);
-  box-shadow: 0 30px 80px rgba(38, 48, 92, 0.26);
-  border: 1px solid rgba(124, 141, 220, 0.15);
+  background: linear-gradient(180deg, #ffffff 0%, #fff5f5 100%);
+  box-shadow: 0 30px 80px rgba(180, 38, 38, 0.2);
+  border: 1px solid rgba(220, 38, 38, 0.15);
   padding: clamp(24px, 5vw, 32px) clamp(20px, 4vw, 30px) clamp(20px, 5vw, 28px);
   animation: riseIn 0.28s ease;
   box-sizing: border-box;
@@ -1310,7 +1336,7 @@ button {
   justify-content: space-between;
   gap: 18px;
   padding-bottom: 22px;
-  border-bottom: 1px solid rgba(95, 111, 188, 0.14);
+  border-bottom: 1px solid rgba(220, 38, 38, 0.14);
   margin-bottom: 22px;
 }
 
@@ -1329,7 +1355,7 @@ button {
   display: grid;
   place-items: center;
   font-size: 1.5rem;
-  box-shadow: 0 12px 24px rgba(76, 82, 233, 0.2);
+  box-shadow: 0 12px 24px rgba(220, 38, 38, 0.2);
 }
 
 .modal-header h2 {
@@ -1349,8 +1375,8 @@ button {
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  background: rgba(76, 82, 233, 0.08);
-  border: 1px solid rgba(76, 82, 233, 0.12);
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.12);
   color: var(--text-dark);
   font-size: 1.35rem;
   cursor: pointer;
@@ -1358,7 +1384,7 @@ button {
 }
 
 .modal-close:hover {
-  background: rgba(76, 82, 233, 0.12);
+  background: rgba(220, 38, 38, 0.15);
 }
 
 .booking-shell {
@@ -1401,7 +1427,7 @@ button {
 .form-group select,
 .form-group textarea {
   background: #ffffff;
-  border: 1.5px solid rgba(123, 140, 220, 0.2);
+  border: 1.5px solid rgba(220, 38, 38, 0.2);
   border-radius: 14px;
   padding: 16px 18px;
   color: var(--text-dark);
@@ -1415,8 +1441,8 @@ button {
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: rgba(76, 82, 233, 0.5);
-  box-shadow: 0 0 0 4px rgba(76, 82, 233, 0.08);
+  border-color: rgba(220, 38, 38, 0.5);
+  box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
 }
 
 .form-group input::placeholder,
@@ -1440,8 +1466,8 @@ button {
 }
 
 .plan-picker-box {
-  background: linear-gradient(135deg, rgba(76, 82, 233, 0.08), rgba(119, 69, 236, 0.08));
-  border: 1px solid rgba(76, 82, 233, 0.18);
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.08), rgba(239, 68, 68, 0.08));
+  border: 1px solid rgba(220, 38, 38, 0.18);
   border-radius: 14px;
   padding: 6px 12px;
 }
@@ -1463,8 +1489,8 @@ button {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: linear-gradient(135deg, rgba(76, 82, 233, 0.08), rgba(119, 69, 236, 0.08));
-  border: 1px solid rgba(76, 82, 233, 0.18);
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.08), rgba(239, 68, 68, 0.08));
+  border: 1px solid rgba(220, 38, 38, 0.18);
   border-radius: 14px;
   padding: 18px 16px;
   color: var(--primary-1);
@@ -1478,15 +1504,15 @@ button {
   justify-content: center;
   padding: 5px 8px;
   border-radius: 999px;
-  background: rgba(76, 82, 233, 0.12);
+  background: rgba(220, 38, 38, 0.12);
   font-size: 0.7rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
 .booking-info {
-  background: linear-gradient(135deg, rgba(76, 82, 233, 0.06), rgba(119, 69, 236, 0.06));
-  border: 1px solid rgba(76, 82, 233, 0.12);
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.06), rgba(239, 68, 68, 0.06));
+  border: 1px solid rgba(220, 38, 38, 0.12);
   border-radius: 14px;
   padding: 14px 16px;
   display: flex;
@@ -1519,16 +1545,16 @@ button {
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 8px;
-  box-shadow: 0 12px 28px rgba(76, 82, 233, 0.22);
+  box-shadow: 0 12px 28px rgba(220, 38, 38, 0.25);
 }
 
 .confirm-button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 16px 32px rgba(76, 82, 233, 0.28);
+  box-shadow: 0 16px 32px rgba(220, 38, 38, 0.32);
 }
 
 .booking-summary {
-  background: linear-gradient(180deg, #1d2447 0%, #272e57 100%);
+  background: linear-gradient(180deg, #2b1216 0%, #3f191f 100%);
   border-radius: 22px;
   padding: 24px 20px;
   color: #fff;
@@ -1616,10 +1642,9 @@ button {
   color: #fff;
   font-size: 0.8rem;
 }
-
 .payment-page-shell {
   min-height: 100vh;
-  background: linear-gradient(135deg, #eef1ff 0%, #f6f3ff 100%);
+  background: linear-gradient(135deg, #fff5f5 0%, #fef2f2 100%);
   display: grid;
   place-items: center;
   padding: 32px;
@@ -1628,9 +1653,9 @@ button {
 .payment-card {
   width: min(100%, 560px);
   background: #fff;
-  border: 1px solid rgba(124, 141, 220, 0.16);
+  border: 1px solid rgba(220, 38, 38, 0.16);
   border-radius: 28px;
-  box-shadow: 0 28px 70px rgba(54, 62, 99, 0.12);
+  box-shadow: 0 28px 70px rgba(180, 38, 38, 0.12);
   padding: 28px 28px 24px;
 }
 
@@ -1638,7 +1663,7 @@ button {
   display: inline-flex;
   padding: 7px 12px;
   border-radius: 999px;
-  background: rgba(76, 82, 233, 0.1);
+  background: rgba(220, 38, 38, 0.1);
   color: var(--primary-1);
   font-size: 0.7rem;
   font-weight: 800;
@@ -1659,8 +1684,8 @@ button {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  background: #f7f9ff;
-  border: 1px solid rgba(124, 141, 220, 0.14);
+  background: #fff5f5;
+  border: 1px solid rgba(220, 38, 38, 0.14);
   border-radius: 18px;
   padding: 18px;
 }
@@ -1679,7 +1704,7 @@ button {
 
 .total-row {
   padding-top: 12px;
-  border-top: 1px solid rgba(124, 141, 220, 0.14);
+  border-top: 1px solid rgba(220, 38, 38, 0.14);
   margin-top: 4px;
 }
 
@@ -1696,9 +1721,9 @@ button {
 }
 
 .payment-option {
-  border: 1px solid rgba(124, 141, 220, 0.18);
+  border: 1px solid rgba(220, 38, 38, 0.18);
   border-radius: 12px;
-  background: #f7f8ff;
+  background: #fff5f5;
   color: var(--text-mid);
   padding: 12px 10px;
   font-weight: 700;
@@ -1720,15 +1745,15 @@ button {
   color: #fff;
   font-size: 1.05rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #1f3fbe 0%, #5d42db 100%);
-  box-shadow: 0 18px 28px rgba(74, 89, 222, 0.2);
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+  box-shadow: 0 18px 28px rgba(220, 38, 38, 0.25);
   cursor: pointer;
 }
 
 .payment-back-btn {
   width: 100%;
   margin-top: 14px;
-  border: 1px solid rgba(124, 141, 220, 0.2);
+  border: 1px solid rgba(220, 38, 38, 0.2);
   border-radius: 12px;
   background: #fff;
   color: var(--text-dark);
@@ -1773,7 +1798,7 @@ button {
 
 .option-card {
   background: #fff;
-  border: 1.5px solid rgba(130, 137, 180, 0.12);
+  border: 1.5px solid rgba(220, 38, 38, 0.12);
   border-radius: 16px;
   padding: 32px 28px;
   text-align: center;
@@ -1782,8 +1807,8 @@ button {
 
 .option-card:hover {
   transform: translateY(-6px);
-  border-color: rgba(76, 82, 233, 0.25);
-  box-shadow: 0 16px 32px rgba(76, 82, 233, 0.12);
+  border-color: rgba(220, 38, 38, 0.25);
+  box-shadow: 0 16px 32px rgba(220, 38, 38, 0.12);
 }
 
 .option-icon {
@@ -1889,7 +1914,7 @@ button {
 .auth-divider::after {
   content: '';
   flex: 1;
-  border-bottom: 1px solid rgba(130, 137, 180, 0.22);
+  border-bottom: 1px solid rgba(220, 38, 38, 0.22);
 }
 
 .auth-divider span {
@@ -1901,7 +1926,7 @@ button {
   padding: 15px 18px;
   border: 1.5px dashed var(--primary-1);
   border-radius: 14px;
-  background: rgba(76, 82, 233, 0.06);
+  background: rgba(220, 38, 38, 0.06);
   color: var(--primary-1);
   font-size: 1rem;
   font-weight: 700;
@@ -1918,7 +1943,7 @@ button {
   color: #fff;
   border-style: solid;
   transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(76, 82, 233, 0.25);
+  box-shadow: 0 10px 24px rgba(220, 38, 38, 0.25);
 }
 
 .services-grid {
@@ -1933,7 +1958,7 @@ button {
 
 .service-item.interactive:hover {
   border-color: var(--primary-1);
-  box-shadow: 0 12px 28px rgba(76, 82, 233, 0.16);
+  box-shadow: 0 12px 28px rgba(220, 38, 38, 0.16);
   transform: translateY(-4px);
 }
 
@@ -1941,7 +1966,7 @@ button {
   width: 100%;
   margin-top: auto;
   padding-top: 12px;
-  border-top: 1px dashed rgba(130, 137, 180, 0.2);
+  border-top: 1px dashed rgba(220, 38, 38, 0.2);
   display: flex;
   justify-content: flex-end;
 }
@@ -1961,8 +1986,8 @@ button {
   display: inline-block;
   padding: 8px 20px;
   border-radius: 999px;
-  background: linear-gradient(135deg, rgba(76, 82, 233, 0.1), rgba(143, 76, 232, 0.08));
-  border: 1px solid rgba(76, 82, 233, 0.2);
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(239, 68, 68, 0.08));
+  border: 1px solid rgba(220, 38, 38, 0.2);
   color: var(--primary-1);
   font-size: 0.88rem;
   font-weight: 700;
@@ -1987,19 +2012,19 @@ button {
   font-size: 1.05rem;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 10px 24px rgba(76, 82, 233, 0.3);
+  box-shadow: 0 10px 24px rgba(220, 38, 38, 0.3);
   transition: all 0.3s ease;
 }
 
 .hero-primary-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 30px rgba(76, 82, 233, 0.4);
+  box-shadow: 0 14px 30px rgba(220, 38, 38, 0.4);
 }
 
 .hero-secondary-btn {
   background: #fff;
   color: var(--text-dark);
-  border: 1.5px solid rgba(130, 137, 180, 0.25);
+  border: 1.5px solid rgba(220, 38, 38, 0.25);
   padding: 16px 28px;
   border-radius: 12px;
   font-size: 1.05rem;
@@ -2011,7 +2036,7 @@ button {
 .hero-secondary-btn:hover {
   border-color: var(--primary-1);
   color: var(--primary-1);
-  background: rgba(76, 82, 233, 0.04);
+  background: rgba(220, 38, 38, 0.04);
 }
 
 .services-subtitle {
@@ -2048,7 +2073,7 @@ button {
 
 .step-card {
   background: #fff;
-  border: 1.5px solid rgba(130, 137, 180, 0.14);
+  border: 1.5px solid rgba(220, 38, 38, 0.14);
   border-radius: 18px;
   padding: 28px 22px;
   position: relative;
@@ -2057,8 +2082,8 @@ button {
 
 .step-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(76, 82, 233, 0.3);
-  box-shadow: 0 12px 28px rgba(76, 82, 233, 0.1);
+  border-color: rgba(220, 38, 38, 0.3);
+  box-shadow: 0 12px 28px rgba(220, 38, 38, 0.1);
 }
 
 .step-num {
@@ -2072,7 +2097,7 @@ button {
   display: grid;
   place-items: center;
   margin-bottom: 18px;
-  box-shadow: 0 6px 14px rgba(76, 82, 233, 0.25);
+  box-shadow: 0 6px 14px rgba(220, 38, 38, 0.25);
 }
 
 .step-card h3 {
@@ -2095,8 +2120,8 @@ button {
 }
 
 .charges-card {
-  background: linear-gradient(135deg, #f8f9ff 0%, #f1f3fe 100%);
-  border: 1.5px solid rgba(76, 82, 233, 0.18);
+  background: linear-gradient(135deg, #fff5f5 0%, #fee2e2 100%);
+  border: 1.5px solid rgba(220, 38, 38, 0.18);
   border-radius: 20px;
   padding: 32px;
   box-shadow: 0 8px 24px rgba(31, 34, 48, 0.04);
@@ -2132,7 +2157,7 @@ button {
 
 .charge-item {
   background: #fff;
-  border: 1px solid rgba(130, 137, 180, 0.14);
+  border: 1px solid rgba(220, 38, 38, 0.14);
   border-radius: 14px;
   padding: 16px 20px;
   display: flex;
@@ -2162,7 +2187,7 @@ button {
 
 .reason-card {
   background: #fff;
-  border: 1.5px solid rgba(130, 137, 180, 0.12);
+  border: 1.5px solid rgba(220, 38, 38, 0.12);
   border-radius: 18px;
   padding: 32px 24px;
   text-align: center;
@@ -2171,8 +2196,8 @@ button {
 
 .reason-card:hover {
   transform: translateY(-6px);
-  border-color: rgba(76, 82, 233, 0.25);
-  box-shadow: 0 16px 32px rgba(76, 82, 233, 0.12);
+  border-color: rgba(220, 38, 38, 0.25);
+  box-shadow: 0 16px 32px rgba(220, 38, 38, 0.12);
 }
 
 .reason-icon {
@@ -2207,7 +2232,7 @@ button {
 
 .faq-item {
   background: #fff;
-  border: 1.5px solid rgba(130, 137, 180, 0.14);
+  border: 1.5px solid rgba(220, 38, 38, 0.14);
   border-radius: 16px;
   padding: 20px 24px;
   cursor: pointer;
@@ -2215,13 +2240,13 @@ button {
 }
 
 .faq-item:hover {
-  border-color: rgba(76, 82, 233, 0.3);
-  background: #fdfdff;
+  border-color: rgba(220, 38, 38, 0.3);
+  background: #fffdfd;
 }
 
 .faq-item.open {
   border-color: var(--primary-1);
-  box-shadow: 0 8px 24px rgba(76, 82, 233, 0.08);
+  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.08);
 }
 
 .faq-question {
@@ -2248,7 +2273,7 @@ button {
 .faq-answer {
   margin-top: 14px;
   padding-top: 14px;
-  border-top: 1px solid rgba(130, 137, 180, 0.12);
+  border-top: 1px solid rgba(220, 38, 38, 0.12);
   color: var(--text-mid);
   font-size: 0.96rem;
   line-height: 1.65;

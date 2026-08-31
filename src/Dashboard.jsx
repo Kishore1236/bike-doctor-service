@@ -33,8 +33,7 @@ function Dashboard({ user, onSignOut, onNavigate, onActivateMembership, onBookSe
       <nav className="spa-navbar">
         <div className="nav-container">
           <div className="nav-brand">
-            <span className="nav-icon">🏍</span>
-            <span>BikeDoctor</span>
+            <img src="/logo.png" alt="BikeDoctor" className="nav-logo-img" />
           </div>
 
           <button 
@@ -100,7 +99,7 @@ function Dashboard({ user, onSignOut, onNavigate, onActivateMembership, onBookSe
                 {services.map((service, idx) => (
                   <div key={idx} className="service-item">
                     <div className="item-icon-box">
-                      <span>{service.icon || '🏍'}</span>
+                      <img src="/logo.png" alt="BikeDoctor Logo" className="service-card-logo-img" />
                     </div>
                     <div className="item-content">
                       <h4>{service.title}</h4>

@@ -119,7 +119,9 @@ function BookingModal({ isOpen, onClose, selectedService = 'Complete Service', b
       <div className="modal-content" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
           <div className="header-copy">
-            <div className="header-icon">🏍</div>
+            <div className="header-icon">
+              <img src="/logo.png" alt="BikeDoctor Logo" className="modal-header-logo-img" />
+            </div>
             <div>
               <h2>Book Your Bike Pickup</h2>
               <p>Fast doorstep pickup & expert maintenance</p>
@@ -235,17 +237,19 @@ function BookingModal({ isOpen, onClose, selectedService = 'Complete Service', b
               )}
             </div>
 
-            <div className="service-selected">
-              <label>SELECTED SERVICE</label>
-              <div className="service-picker-box">
-                <select value={currentService} onChange={(e) => setCurrentService(e.target.value)}>
-                  <option value="Complete Service">Complete Service Package</option>
-                  {services.map((srv) => (
-                    <option key={srv.title} value={srv.title}>{srv.icon} {srv.title}</option>
-                  ))}
-                </select>
+            {!isMonthlySubscription && (
+              <div className="service-selected">
+                <label>SELECTED SERVICE</label>
+                <div className="service-picker-box">
+                  <select value={currentService} onChange={(e) => setCurrentService(e.target.value)}>
+                    <option value="Complete Service">Complete Service Package</option>
+                    {services.map((srv) => (
+                      <option key={srv.title} value={srv.title}>{srv.icon} {srv.title}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
-            </div>
+            )}
 
             <div className="booking-info">
               <div className="info-item">

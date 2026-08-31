@@ -5,14 +5,14 @@ export const pickupOptions = [
 ];
 
 export const services = [
-  { icon: '💦', title: 'Foam & Water Wash', text: 'Deep exterior cleaning with careful drying.' },
-  { icon: '⛓️', title: 'Chain Cleaning', text: 'Chain cleaning and lubrication for smoother riding.' },
-  { icon: '✨', title: 'Polishing', text: 'Bring back a cleaner and fresher finish.' },
-  { icon: '🛞', title: 'Tyre & Wheel Care', text: 'Wheel cleaning and tyre dressing.' },
-  { icon: '🪖', title: 'Helmet Cleaning', text: 'Freshen up your helmet and riding gear.' },
-  { icon: '🔧', title: 'Basic Inspection', text: 'Simple visual checks and service notes.' },
-  { icon: '🧽', title: 'Deep Cleaning', text: 'Extra cleaning for heavily soiled bikes.' },
-  { icon: '➕', title: 'More Services', text: 'Additional bike-care services coming soon.' },
+  { icon: '🏍', title: 'Foam & Water Wash', text: 'Deep exterior cleaning with careful drying.' },
+  { icon: '🏍', title: 'Chain Cleaning', text: 'Chain cleaning and lubrication for smoother riding.' },
+  { icon: '🏍', title: 'Polishing', text: 'Bring back a cleaner and fresher finish.' },
+  { icon: '🏍', title: 'Tyre & Wheel Care', text: 'Wheel cleaning and tyre dressing.' },
+  { icon: '🏍', title: 'Helmet Cleaning', text: 'Freshen up your helmet and riding gear.' },
+  { icon: '🏍', title: 'Basic Inspection', text: 'Simple visual checks and service notes.' },
+  { icon: '🏍', title: 'Deep Cleaning', text: 'Extra cleaning for heavily soiled bikes.' },
+  { icon: '🏍', title: 'More Services', text: 'Additional bike-care services coming soon.' },
 ];
 
 export const reasons = [
