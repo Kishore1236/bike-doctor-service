@@ -63,18 +63,122 @@ class ErrorBoundary extends Component {
 
 function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
   const [processing, setProcessing] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('upi'); // 'upi', 'card', 'netbanking'
+  const [errorMsg, setErrorMsg] = useState('');
 
-  const planName = bookingDetails?.plan || 'Premium Care';
-  const displayService = bookingDetails?.service || selectedService;
-  const displayTotal = bookingDetails?.totalAmount || '₹ 319';
+  const planName = bookingDetails?.planName || bookingDetails?.plan || 'Premium Care';
+  const displayService = bookingDetails?.serviceName || bookingDetails?.service || selectedService;
+  const displayTotal = bookingDetails?.totalAmount || '₹319';
 
-  const handlePay = () => {
+  const handlePay = async () => {
+    setErrorMsg('');
+    if (!window.Razorpay) {
+      setErrorMsg('Razorpay SDK failed to load. Please refresh the page or check your internet connection.');
+      return;
+    }
+
     setProcessing(true);
-    setTimeout(() => {
+
+    const apiUrl = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '');
+
+    try {
+      // 1. Create order on backend
+      const res = await fetch(`${apiUrl}/api/payment/create-order`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          planName,
+          locationType: bookingDetails?.locationType || bookingDetails?.location || 'home',
+          bookingDetails: {
+            ...bookingDetails,
+            paymentMethod,
+          },
+        }),
+      });
+
+      const orderData = await res.json();
+
+      if (!res.ok || !orderData.success) {
+        throw new Error(orderData.message || 'Failed to create Razorpay payment order.');
+      }
+
+      const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID || orderData.keyId;
+
+      // 2. Open Razorpay Checkout modal
+      const options = {
+        key: razorpayKey,
+        amount: orderData.amount,
+        currency: orderData.currency || 'INR',
+        name: 'Bike Doctor',
+        description: `${planName} Service Booking`,
+        order_id: orderData.orderId,
+        prefill: {
+          name: bookingDetails?.name || bookingDetails?.pickupPerson || '',
+          email: bookingDetails?.email || '',
+          contact: bookingDetails?.mobile || bookingDetails?.phone || '',
+          method: paymentMethod,
+        },
+        config: {
+          display: {
+            preferences: {
+              show_default_blocks: true,
+            },
+          },
+        },
+        handler: async function (response) {
+          try {
+            // 3. Verify payment signature on Express backend
+            const verifyRes = await fetch(`${apiUrl}/api/payment/verify`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                bookingDetails: {
+                  ...bookingDetails,
+                  paymentMethod,
+                  totalAmount: displayTotal,
+                  planName,
+                  serviceName: displayService,
+                },
+              }),
+            });
+
+            const verifyData = await verifyRes.json();
+
+            if (verifyRes.ok && verifyData.success) {
+              alert(`Booking Confirmed! 🎉\n\nBooking ID: ${verifyData.bookingId}\nAmount: ${displayTotal}\nStatus: PAID\n\nDetails saved to dispatch queue.`);
+              setProcessing(false);
+              onComplete();
+            } else {
+              setErrorMsg(verifyData.message || 'Payment signature verification failed on backend server.');
+              setProcessing(false);
+            }
+          } catch (err) {
+            console.error('Verification error:', err);
+            setErrorMsg('Network error while verifying payment signature with server.');
+            setProcessing(false);
+          }
+        },
+        modal: {
+          ondismiss: function () {
+            setProcessing(false);
+          },
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function (resp) {
+        setErrorMsg(resp.error?.description || 'Payment transaction was declined or failed.');
+        setProcessing(false);
+      });
+      rzp.open();
+    } catch (err) {
+      console.error('Order creation error:', err);
+      setErrorMsg(err.message || 'Could not connect to payment backend server.');
       setProcessing(false);
-      alert(`Payment of ${displayTotal} completed successfully! Redirecting...`);
-      onComplete();
-    }, 800);
+    }
   };
 
   return (
@@ -83,6 +187,18 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
         <div className="payment-badge">Secure Checkout</div>
         <h2>Complete Payment</h2>
         <div className="payment-summary">
+          {bookingDetails?.bikeModel && (
+            <div className="summary-row">
+              <span>Bike Model</span>
+              <strong>{bookingDetails.bikeModel}</strong>
+            </div>
+          )}
+          {bookingDetails?.timeSlot && (
+            <div className="summary-row">
+              <span>Time Slot</span>
+              <strong>{bookingDetails.timeSlot}</strong>
+            </div>
+          )}
           <div className="summary-row">
             <span>Service</span>
             <strong>{displayService}</strong>
@@ -98,16 +214,51 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
         </div>
 
         <div className="payment-options">
-          <button className="payment-option active" type="button">UPI</button>
-          <button className="payment-option" type="button">Card</button>
-          <button className="payment-option" type="button">Net Banking</button>
+          <button
+            className={`payment-option ${paymentMethod === 'upi' ? 'active' : ''}`}
+            type="button"
+            onClick={() => setPaymentMethod('upi')}
+          >
+            UPI
+          </button>
+          <button
+            className={`payment-option ${paymentMethod === 'card' ? 'active' : ''}`}
+            type="button"
+            onClick={() => setPaymentMethod('card')}
+          >
+            Card
+          </button>
+          <button
+            className={`payment-option ${paymentMethod === 'netbanking' ? 'active' : ''}`}
+            type="button"
+            onClick={() => setPaymentMethod('netbanking')}
+          >
+            Net Banking
+          </button>
         </div>
+
+        {errorMsg && (
+          <div style={{
+            background: '#fef2f2',
+            border: '1px solid rgba(220, 38, 38, 0.3)',
+            color: '#991b1b',
+            padding: '12px 16px',
+            borderRadius: '12px',
+            fontSize: '0.9rem',
+            lineHeight: 1.4,
+            marginTop: '16px',
+          }}>
+            <strong>⚠️ Payment Error:</strong> {errorMsg}
+          </div>
+        )}
 
         <button className="payment-confirm-btn" type="button" onClick={handlePay} disabled={processing}>
           {processing ? 'Processing...' : `Pay ${displayTotal}`}
         </button>
 
-        <button className="payment-back-btn" type="button" onClick={onBack}>Back to booking</button>
+        <button className="payment-back-btn" type="button" onClick={onBack} disabled={processing}>
+          Back to booking
+        </button>
       </div>
     </div>
   );

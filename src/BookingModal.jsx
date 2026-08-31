@@ -10,6 +10,8 @@ function BookingModal({ isOpen, onClose, selectedService = 'Complete Service', b
     altMobile: '',
     pickupPerson: '',
     receiverName: '',
+    bikeModel: '',
+    timeSlot: '09:00 AM - 11:00 AM',
   });
 
   const [currentService, setCurrentService] = useState(selectedService);
@@ -72,11 +74,30 @@ function BookingModal({ isOpen, onClose, selectedService = 'Complete Service', b
     const payload = {
       name: formData.name.trim(),
       locationType: formData.location,
+      pickupType: formData.location,
       address: formData.landmark.trim(),
+      location: formData.landmark.trim(),
       phone: formData.mobile.trim(),
+      mobile: formData.mobile.trim(),
       altPhone: formData.altMobile.trim() || 'Not provided',
+      altMobile: formData.altMobile.trim() || 'Not provided',
+      alternateMobile: formData.altMobile.trim() || 'Not provided',
       pickupName: formData.pickupPerson.trim(),
+      pickupPerson: formData.pickupPerson.trim(),
       receiverName: formData.receiverName.trim(),
+      receiver: formData.receiverName.trim(),
+      timeSlot: formData.timeSlot,
+      time_slot: formData.timeSlot,
+      timeslot: formData.timeSlot,
+      slot: formData.timeSlot,
+      time: formData.timeSlot,
+      'Time Slot': formData.timeSlot,
+      bikeModel: formData.bikeModel.trim(),
+      bike_model: formData.bikeModel.trim(),
+      bikemodel: formData.bikeModel.trim(),
+      bike: formData.bikeModel.trim(),
+      model: formData.bikeModel.trim(),
+      'Bike Model': formData.bikeModel.trim(),
       service: fullPlanLabel,
       plan: fullPlanLabel,
       selectedPlan: fullPlanLabel,
@@ -166,6 +187,29 @@ function BookingModal({ isOpen, onClose, selectedService = 'Complete Service', b
                   required
                   rows="3"
                 />
+              </div>
+
+              <div className="form-group">
+                <label>BIKE MODEL *</label>
+                <input
+                  type="text"
+                  name="bikeModel"
+                  placeholder="e.g. Royal Enfield Classic, Activa 6G, Pulsar 150"
+                  value={formData.bikeModel}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>PREFERRED TIME SLOT *</label>
+                <select name="timeSlot" value={formData.timeSlot} onChange={handleChange} required>
+                  <option value="09:00 AM - 11:00 AM">🌅 09:00 AM - 11:00 AM</option>
+                  <option value="11:00 AM - 01:00 PM">☀️ 11:00 AM - 01:00 PM</option>
+                  <option value="01:00 PM - 03:00 PM">🌤️ 01:00 PM - 03:00 PM</option>
+                  <option value="03:00 PM - 05:00 PM">🌇 03:00 PM - 05:00 PM</option>
+                  <option value="05:00 PM - 07:00 PM">🌙 05:00 PM - 07:00 PM</option>
+                </select>
               </div>
 
               <div className="form-group">
