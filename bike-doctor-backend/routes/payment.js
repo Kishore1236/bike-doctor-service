@@ -122,18 +122,39 @@ router.post('/verify', async (req, res) => {
 
     const bookingRecord = {
       bookingId,
+      name: bookingDetails?.name || bookingDetails?.pickupPerson || 'Customer',
       customerName: bookingDetails?.name || bookingDetails?.pickupPerson || 'Customer',
       email: bookingDetails?.email || bookingDetails?.userEmail || 'Not provided',
       phone: bookingDetails?.mobile || bookingDetails?.phone || '',
-      service: bookingDetails?.serviceName || bookingDetails?.service || 'Complete Service',
-      plan: bookingDetails?.planName || bookingDetails?.plan || 'Premium Care',
+      mobile: bookingDetails?.mobile || bookingDetails?.phone || '',
+      altPhone: bookingDetails?.altMobile || 'Not provided',
+      altMobile: bookingDetails?.altMobile || 'Not provided',
+      alternateMobile: bookingDetails?.altMobile || 'Not provided',
+      pickupPerson: bookingDetails?.pickupPerson || bookingDetails?.name || '',
+      pickupName: bookingDetails?.pickupPerson || bookingDetails?.name || '',
+      receiverName: bookingDetails?.receiverName || bookingDetails?.receiver || 'Not provided',
+      receiver: bookingDetails?.receiverName || bookingDetails?.receiver || 'Not provided',
+      location: bookingDetails?.landmark || bookingDetails?.location || bookingDetails?.address || '',
+      address: bookingDetails?.landmark || bookingDetails?.location || bookingDetails?.address || '',
+      locationType: bookingDetails?.locationType || bookingDetails?.pickupType || 'home',
+      pickupType: bookingDetails?.locationType || bookingDetails?.pickupType || 'home',
+      timeSlot: bookingDetails?.timeSlot || '',
+      time_slot: bookingDetails?.timeSlot || '',
+      'Time Slot': bookingDetails?.timeSlot || '',
+      bikeModel: bookingDetails?.bikeModel || '',
+      bike_model: bookingDetails?.bikeModel || '',
+      'Bike Model': bookingDetails?.bikeModel || '',
+      service: bookingDetails?.service || bookingDetails?.serviceName || 'Complete Service',
+      plan: bookingDetails?.plan || bookingDetails?.planName || 'Premium Care',
       amount: formattedAmount,
+      totalAmount: formattedAmount,
       paymentMethod: bookingDetails?.paymentMethod || 'UPI',
-      razorpayOrderId: razorpay_order_id,
-      razorpayPaymentId: razorpay_payment_id,
+      razorpayOrderId: razorpay_order_id || '',
+      razorpayPaymentId: razorpay_payment_id || '',
       paymentStatus: 'PAID',
       bookingStatus: 'CONFIRMED',
-      createdAt: new Date().toLocaleString(),
+      createdAt: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+      timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
     };
 
     // Save to Google Sheets
@@ -159,6 +180,76 @@ router.post('/verify', async (req, res) => {
     res.status(500).json({
       success: false,
       message: error.message || 'Server error verifying payment.',
+    });
+  }
+});
+
+// 3. Pay at Service Booking (Offline/Doorstep Payment)
+router.post('/pay-at-service', async (req, res) => {
+  try {
+    const { bookingDetails } = req.body || {};
+
+    const bookingId = `BK${Date.now().toString().slice(-6)}${Math.floor(1000 + Math.random() * 9000)}`;
+    const formattedAmount = bookingDetails?.totalAmount || `₹${calculateTotalAmount(bookingDetails?.planName, bookingDetails?.locationType)}`;
+
+    const bookingRecord = {
+      bookingId,
+      name: bookingDetails?.name || bookingDetails?.pickupPerson || 'Customer',
+      customerName: bookingDetails?.name || bookingDetails?.pickupPerson || 'Customer',
+      email: bookingDetails?.email || bookingDetails?.userEmail || 'Not provided',
+      phone: bookingDetails?.mobile || bookingDetails?.phone || '',
+      mobile: bookingDetails?.mobile || bookingDetails?.phone || '',
+      altPhone: bookingDetails?.altMobile || 'Not provided',
+      altMobile: bookingDetails?.altMobile || 'Not provided',
+      alternateMobile: bookingDetails?.altMobile || 'Not provided',
+      pickupPerson: bookingDetails?.pickupPerson || bookingDetails?.name || '',
+      pickupName: bookingDetails?.pickupPerson || bookingDetails?.name || '',
+      receiverName: bookingDetails?.receiverName || bookingDetails?.receiver || 'Not provided',
+      receiver: bookingDetails?.receiverName || bookingDetails?.receiver || 'Not provided',
+      location: bookingDetails?.landmark || bookingDetails?.location || bookingDetails?.address || '',
+      address: bookingDetails?.landmark || bookingDetails?.location || bookingDetails?.address || '',
+      locationType: bookingDetails?.locationType || bookingDetails?.pickupType || 'home',
+      pickupType: bookingDetails?.locationType || bookingDetails?.pickupType || 'home',
+      timeSlot: bookingDetails?.timeSlot || '',
+      time_slot: bookingDetails?.timeSlot || '',
+      'Time Slot': bookingDetails?.timeSlot || '',
+      bikeModel: bookingDetails?.bikeModel || '',
+      bike_model: bookingDetails?.bikeModel || '',
+      'Bike Model': bookingDetails?.bikeModel || '',
+      service: bookingDetails?.service || bookingDetails?.serviceName || 'Complete Service',
+      plan: bookingDetails?.plan || bookingDetails?.planName || 'Premium Care',
+      amount: formattedAmount,
+      totalAmount: formattedAmount,
+      paymentMethod: 'Pay at Service',
+      paymentStatus: 'Pending',
+      bookingStatus: 'CONFIRMED',
+      createdAt: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+      timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+    };
+
+    // Save to Google Sheets
+    let googleSheetSaved = false;
+    let sheetError = null;
+    try {
+      await appendBooking(bookingRecord);
+      googleSheetSaved = true;
+    } catch (err) {
+      console.error('Google Sheets storage error:', err.message);
+      sheetError = err.message;
+    }
+
+    return res.status(200).json({
+      success: true,
+      bookingId,
+      googleSheetSaved,
+      sheetErrorNotice: sheetError ? `Booking recorded. Google Sheet note: ${sheetError}` : null,
+      message: 'Booking recorded successfully.',
+    });
+  } catch (error) {
+    console.error('Error creating pay-at-service booking:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Server error creating booking.',
     });
   }
 });

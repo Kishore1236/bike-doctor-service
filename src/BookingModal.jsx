@@ -66,17 +66,17 @@ function BookingModal({ isOpen, onClose, selectedService = 'Complete Service', b
     e.preventDefault();
     setSubmitting(true);
 
-    const scriptUrl = import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz-7FfKmE6FgZGxs75wMK-QuFuP97U915UAy9Ukeo5JxlgqwYoevb25RQKHFFZkunjw/exec';
-
     const planDisplayName = effectivePlan === 'Monthly Subscription' ? 'Monthly Bike Care' : effectivePlan;
     const fullPlanLabel = `${planDisplayName} - ₹${planDetails.price}`;
 
     const payload = {
       name: formData.name.trim(),
+      customerName: formData.name.trim(),
       locationType: formData.location,
       pickupType: formData.location,
       address: formData.landmark.trim(),
       location: formData.landmark.trim(),
+      landmark: formData.landmark.trim(),
       phone: formData.mobile.trim(),
       mobile: formData.mobile.trim(),
       altPhone: formData.altMobile.trim() || 'Not provided',
@@ -84,20 +84,20 @@ function BookingModal({ isOpen, onClose, selectedService = 'Complete Service', b
       alternateMobile: formData.altMobile.trim() || 'Not provided',
       pickupName: formData.pickupPerson.trim(),
       pickupPerson: formData.pickupPerson.trim(),
+      bikeOwnerName: formData.pickupPerson.trim(),
       receiverName: formData.receiverName.trim(),
       receiver: formData.receiverName.trim(),
+      alternateContactPerson: formData.receiverName.trim(),
       timeSlot: formData.timeSlot,
       time_slot: formData.timeSlot,
       timeslot: formData.timeSlot,
       slot: formData.timeSlot,
       time: formData.timeSlot,
-      'Time Slot': formData.timeSlot,
       bikeModel: formData.bikeModel.trim(),
       bike_model: formData.bikeModel.trim(),
       bikemodel: formData.bikeModel.trim(),
       bike: formData.bikeModel.trim(),
       model: formData.bikeModel.trim(),
-      'Bike Model': formData.bikeModel.trim(),
       service: fullPlanLabel,
       plan: fullPlanLabel,
       selectedPlan: fullPlanLabel,
@@ -106,20 +106,45 @@ function BookingModal({ isOpen, onClose, selectedService = 'Complete Service', b
       serviceName: currentService,
       deliveryFee: `₹${deliveryFee}`,
       totalAmount: `₹${totalEstimatedAmount}`,
-      timestamp: new Date().toLocaleString(),
+      amount: `₹${totalEstimatedAmount}`,
+      timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+      createdAt: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+      'Timestamp': new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+      'Name': formData.name.trim(),
+      'Pickup Type': formData.location,
+      'Location': formData.landmark.trim(),
+      'Mobile': formData.mobile.trim(),
+      'Alternate Mobile': formData.altMobile.trim() || 'Not provided',
+      'Bike Owner Name': formData.pickupPerson.trim(),
+      'Alternate Contact person': formData.receiverName.trim(),
+      'Time Slot': formData.timeSlot,
+      'Bike Model': formData.bikeModel.trim(),
+      'Plan': fullPlanLabel,
     };
 
-    try {
-      await fetch(scriptUrl, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'text/plain;charset=utf-8',
-        },
-        body: JSON.stringify(payload),
-      });
-    } catch (err) {
-      console.error('Failed to register booking in Google Sheet:', err);
+    const customerScriptUrl = import.meta.env.VITE_GOOGLE_CUSTOMER_SCRIPT_URL;
+    const bookingScriptUrl = import.meta.env.VITE_GOOGLE_BOOKING_SCRIPT_URL || import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz-7FfKmE6FgZGxs75wMK-QuFuP97U915UAy9Ukeo5JxlgqwYoevb25RQKHFFZkunjw/exec';
+
+    const scriptUrls = new Set();
+    [customerScriptUrl, bookingScriptUrl].forEach(url => {
+      if (url && !url.includes('YOUR_GOOGLE_SCRIPT_URL')) {
+        scriptUrls.add(url);
+      }
+    });
+
+    for (const url of scriptUrls) {
+      try {
+        await fetch(url, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8',
+          },
+          body: JSON.stringify(payload),
+        });
+      } catch (err) {
+        console.error(`Failed to register booking in Google Sheet (${url}):`, err);
+      }
     }
 
     setSubmitting(false);

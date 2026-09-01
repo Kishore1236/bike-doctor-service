@@ -25,54 +25,73 @@ function getSheetsClient() {
 }
 
 export async function appendBooking(bookingData) {
-  const scriptUrl = process.env.GOOGLE_SCRIPT_URL;
+  const customerScriptUrl = process.env.GOOGLE_CUSTOMER_SCRIPT_URL;
+  const bookingScriptUrl = process.env.GOOGLE_BOOKING_SCRIPT_URL;
+  const defaultScriptUrl = process.env.GOOGLE_SCRIPT_URL;
 
-  // Option 1: Use Google Apps Script Web App URL if provided
-  if (scriptUrl && !scriptUrl.includes('YOUR_GOOGLE_SCRIPT_URL')) {
-    const payload = {
-      bookingId: bookingData.bookingId || `BK${Date.now()}`,
-      name: bookingData.customerName || bookingData.name || '',
-      customerName: bookingData.customerName || bookingData.name || '',
-      email: bookingData.email || 'Not provided',
-      phone: bookingData.phone || bookingData.mobile || '',
-      mobile: bookingData.phone || bookingData.mobile || '',
-      altPhone: bookingData.altPhone || bookingData.altMobile || 'Not provided',
-      altMobile: bookingData.altMobile || 'Not provided',
-      pickupPerson: bookingData.pickupPerson || bookingData.pickupName || '',
-      pickupName: bookingData.pickupPerson || bookingData.pickupName || '',
-      receiver: bookingData.receiver || bookingData.receiverName || '',
-      receiverName: bookingData.receiver || bookingData.receiverName || '',
-      location: bookingData.location || bookingData.address || '',
-      address: bookingData.location || bookingData.address || '',
-      locationType: bookingData.locationType || 'home',
-      timeSlot: bookingData.timeSlot || '',
-      time_slot: bookingData.timeSlot || '',
-      'Time Slot': bookingData.timeSlot || '',
-      bikeModel: bookingData.bikeModel || '',
-      bike_model: bookingData.bikeModel || '',
-      'Bike Model': bookingData.bikeModel || '',
-      service: bookingData.service || bookingData.serviceName || '',
-      plan: bookingData.plan || bookingData.planName || '',
-      amount: bookingData.amount || bookingData.totalAmount || '',
-      totalAmount: bookingData.amount || bookingData.totalAmount || '',
-      paymentMethod: bookingData.paymentMethod ? bookingData.paymentMethod.toUpperCase() : 'UPI',
-      razorpayOrderId: bookingData.razorpayOrderId || '',
-      razorpayPaymentId: bookingData.razorpayPaymentId || '',
-      paymentStatus: bookingData.paymentStatus || 'PAID',
-      bookingStatus: bookingData.bookingStatus || 'CONFIRMED',
-      timestamp: bookingData.createdAt || new Date().toLocaleString(),
-      createdAt: bookingData.createdAt || new Date().toLocaleString(),
-    };
+  const payload = {
+    bookingId: bookingData.bookingId || `BK${Date.now()}`,
+    name: bookingData.name || bookingData.customerName || '',
+    customerName: bookingData.customerName || bookingData.name || '',
+    email: bookingData.email || 'Not provided',
+    phone: bookingData.mobile || bookingData.phone || '',
+    mobile: bookingData.mobile || bookingData.phone || '',
+    altPhone: bookingData.altMobile || bookingData.altPhone || 'Not provided',
+    altMobile: bookingData.altMobile || bookingData.altPhone || 'Not provided',
+    alternateMobile: bookingData.altMobile || bookingData.altPhone || 'Not provided',
+    pickupPerson: bookingData.pickupPerson || bookingData.pickupName || bookingData.name || '',
+    pickupName: bookingData.pickupPerson || bookingData.pickupName || bookingData.name || '',
+    bikeOwnerName: bookingData.pickupPerson || bookingData.pickupName || bookingData.name || '',
+    receiver: bookingData.receiverName || bookingData.receiver || 'Not provided',
+    receiverName: bookingData.receiverName || bookingData.receiver || 'Not provided',
+    alternateContactPerson: bookingData.receiverName || bookingData.receiver || 'Not provided',
+    location: bookingData.location || bookingData.address || bookingData.landmark || '',
+    address: bookingData.location || bookingData.address || bookingData.landmark || '',
+    landmark: bookingData.location || bookingData.address || bookingData.landmark || '',
+    locationType: bookingData.locationType || bookingData.pickupType || 'home',
+    pickupType: bookingData.pickupType || bookingData.locationType || 'home',
+    timeSlot: bookingData.timeSlot || bookingData.time_slot || '',
+    time_slot: bookingData.timeSlot || bookingData.time_slot || '',
+    'Time Slot': bookingData.timeSlot || bookingData.time_slot || '',
+    bikeModel: bookingData.bikeModel || bookingData.bike_model || '',
+    bike_model: bookingData.bikeModel || bookingData.bike_model || '',
+    'Bike Model': bookingData.bikeModel || bookingData.bike_model || '',
+    service: bookingData.plan || bookingData.service || bookingData.serviceName || '',
+    plan: bookingData.plan || bookingData.service || bookingData.serviceName || '',
+    amount: bookingData.amount || bookingData.totalAmount || '',
+    totalAmount: bookingData.amount || bookingData.totalAmount || '',
+    paymentMethod: bookingData.paymentMethod ? bookingData.paymentMethod.toUpperCase() : 'UPI',
+    razorpayOrderId: bookingData.razorpayOrderId || '',
+    razorpayPaymentId: bookingData.razorpayPaymentId || '',
+    paymentStatus: bookingData.paymentStatus || 'PAID',
+    bookingStatus: bookingData.bookingStatus || 'CONFIRMED',
+    timestamp: bookingData.timestamp || bookingData.createdAt || new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+    createdAt: bookingData.createdAt || bookingData.timestamp || new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+  };
 
-    try {
-      await fetch(scriptUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+  const scriptUrls = new Set();
+  [customerScriptUrl, bookingScriptUrl, defaultScriptUrl].forEach((url) => {
+    if (url && !url.includes('YOUR_GOOGLE_SCRIPT_URL')) {
+      scriptUrls.add(url);
+    }
+  });
+
+  if (scriptUrls.size > 0) {
+    let success = false;
+    for (const url of scriptUrls) {
+      try {
+        await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        success = true;
+      } catch (scriptErr) {
+        console.warn(`Google Script URL post warning (${url}):`, scriptErr.message);
+      }
+    }
+    if (success) {
       return { success: true, method: 'google_script_url' };
-    } catch (scriptErr) {
-      console.warn('Google Script URL post warning:', scriptErr.message);
     }
   }
 
@@ -89,30 +108,31 @@ export async function appendBooking(bookingData) {
   try {
     const headerCheck = await sheets.spreadsheets.values.get({
       spreadsheetId,
-      range: `${sheetName}!A1:M1`,
+      range: `${sheetName}!A1:N1`,
     });
 
     if (!headerCheck.data.values || headerCheck.data.values.length === 0) {
       await sheets.spreadsheets.values.update({
         spreadsheetId,
-        range: `${sheetName}!A1:M1`,
+        range: `${sheetName}!A1:N1`,
         valueInputOption: 'USER_ENTERED',
         requestBody: {
           values: [
             [
-              'Booking ID',
-              'Customer Name',
-              'Email',
-              'Phone',
-              'Service',
+              'Timestamp',
+              'Name',
+              'Pickup Type',
+              'Location',
+              'Mobile',
+              'Alternate Mobile',
+              'Bike Owner Name',
+              'Alternate Contact person',
+              'Time Slot',
+              'Bike Model',
               'Plan',
-              'Amount',
+              'Booking ID',
               'Payment Method',
-              'Razorpay Order ID',
-              'Razorpay Payment ID',
               'Payment Status',
-              'Booking Status',
-              'Created At',
             ],
           ],
         },
@@ -123,24 +143,25 @@ export async function appendBooking(bookingData) {
   }
 
   const row = [
-    bookingData.bookingId || `BK${Date.now()}`,
-    bookingData.customerName || bookingData.name || '',
-    bookingData.email || 'Not provided',
-    bookingData.phone || bookingData.mobile || '',
-    bookingData.service || bookingData.serviceName || '',
-    bookingData.plan || bookingData.planName || '',
-    bookingData.amount || bookingData.totalAmount || '',
-    bookingData.paymentMethod ? bookingData.paymentMethod.toUpperCase() : 'UPI',
-    bookingData.razorpayOrderId || '',
-    bookingData.razorpayPaymentId || '',
-    bookingData.paymentStatus || 'PAID',
-    bookingData.bookingStatus || 'CONFIRMED',
-    bookingData.createdAt || new Date().toLocaleString(),
+    bookingData.timestamp || bookingData.createdAt || new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+    bookingData.name || bookingData.customerName || '',
+    bookingData.pickupType || bookingData.locationType || 'home',
+    bookingData.location || bookingData.address || bookingData.landmark || '',
+    bookingData.mobile || bookingData.phone || '',
+    bookingData.altMobile || bookingData.altPhone || 'Not provided',
+    bookingData.pickupPerson || bookingData.pickupName || bookingData.name || '',
+    bookingData.receiverName || bookingData.receiver || 'Not provided',
+    bookingData.timeSlot || bookingData.time_slot || '',
+    bookingData.bikeModel || bookingData.bike_model || '',
+    bookingData.plan || bookingData.service || '',
+    bookingData.bookingId || '',
+    bookingData.paymentMethod || '',
+    bookingData.paymentStatus || '',
   ];
 
   const response = await sheets.spreadsheets.values.append({
     spreadsheetId,
-    range: `${sheetName}!A:M`,
+    range: `${sheetName}!A:N`,
     valueInputOption: 'USER_ENTERED',
     insertDataOption: 'INSERT_ROWS',
     requestBody: {
