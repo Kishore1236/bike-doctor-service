@@ -5,6 +5,18 @@ import BookingModal from './BookingModal';
 import ConfirmationModal from './ConfirmationModal';
 import MyBookingsModal from './MyBookingsModal';
 
+const API_URL = (() => {
+  let apiUrl = (import.meta.env.VITE_API_URL || '').trim();
+  if (!apiUrl) {
+    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+      apiUrl = 'https://bike-doctor-backend-vert.vercel.app';
+    } else {
+      apiUrl = ''; // Use Vercel serverless API functions inside bike-doctor-service/api/payment
+    }
+  }
+  return apiUrl.replace(/\/$/, '');
+})();
+
 class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
@@ -73,14 +85,6 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
   const displayService = bookingDetails?.serviceName || bookingDetails?.service || selectedService;
   const displayTotal = bookingDetails?.totalAmount || '₹319';
 
-  const getApiUrl = () => {
-    let apiUrl = (import.meta.env.VITE_API_URL || '').trim();
-    if (!apiUrl) {
-      apiUrl = 'https://bike-doctor-backend-vert.vercel.app';
-    }
-    return apiUrl.replace(/\/$/, '');
-  };
-
   const handlePayOnline = async () => {
     setErrorMsg('');
     if (!window.Razorpay) {
@@ -89,11 +93,10 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
     }
 
     setProcessing(true);
-    const apiUrl = getApiUrl();
 
     try {
       // 1. Create order on backend
-      const res = await fetch(`${apiUrl}/api/payment/create-order`, {
+      const res = await fetch(`${API_URL}/api/payment/create-order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -138,7 +141,7 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
         handler: async function (response) {
           try {
             // 3. Verify payment signature on backend
-            const verifyRes = await fetch(`${apiUrl}/api/payment/verify`, {
+            const verifyRes = await fetch(`${API_URL}/api/payment/verify`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -212,7 +215,6 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
   const handlePayAtService = async () => {
     setErrorMsg('');
     setProcessing(true);
-    const apiUrl = getApiUrl();
 
     const payloadDetails = {
       ...bookingDetails,
@@ -226,7 +228,7 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
     let bookingId = `BK${Date.now().toString().slice(-6)}${Math.floor(1000 + Math.random() * 9000)}`;
 
     try {
-      const res = await fetch(`${apiUrl}/api/payment/pay-at-service`, {
+      const res = await fetch(`${API_URL}/api/payment/pay-at-service`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ bookingDetails: payloadDetails }),
@@ -465,8 +467,6 @@ function App() {
         const localList = JSON.parse(stored);
         if (!Array.isArray(localList) || localList.length === 0) return;
 
-        const apiUrl = (import.meta.env.VITE_API_URL || 'https://bike-doctor-backend-vert.vercel.app').replace(/\/$/, '');
-
         let countSynced = 0;
         for (const item of localList) {
           if (!item._synced) {
@@ -477,7 +477,7 @@ function App() {
                 email: item.email || user.email || '',
                 mobile: item.phone || item.mobile || '',
               };
-              await fetch(`${apiUrl}/api/payment/pay-at-service`, {
+              await fetch(`${API_URL}/api/payment/pay-at-service`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ bookingDetails: payloadDetails }),
@@ -510,8 +510,7 @@ function App() {
         if (user.email) queryParams.append('email', user.email);
         if (user.name) queryParams.append('name', user.name);
 
-        const apiUrl = (import.meta.env.VITE_API_URL || 'https://bike-doctor-backend-vert.vercel.app').replace(/\/$/, '');
-        const res = await fetch(`${apiUrl}/api/payment/user-bookings?${queryParams.toString()}`);
+        const res = await fetch(`${API_URL}/api/payment/user-bookings?${queryParams.toString()}`);
         if (!res.ok) return;
 
         const data = await res.json();
