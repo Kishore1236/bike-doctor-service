@@ -74,13 +74,11 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
   const displayTotal = bookingDetails?.totalAmount || '₹319';
 
   const getApiUrl = () => {
-    let apiUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
-    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-      if (apiUrl.includes('localhost') || apiUrl.includes('127.0.0.1')) {
-        apiUrl = 'https://bike-doctor-backend-vert.vercel.app';
-      }
+    let apiUrl = (import.meta.env.VITE_API_URL || '').trim();
+    if (!apiUrl) {
+      apiUrl = 'https://bike-doctor-backend-vert.vercel.app';
     }
-    return apiUrl;
+    return apiUrl.replace(/\/$/, '');
   };
 
   const handlePayOnline = async () => {
@@ -456,9 +454,10 @@ function App() {
     }
   }, [user]);
 
+  const initializedRef = useRef(false);
+
   useEffect(() => {
-    if (!clientId) {
-      setAuthReady(false);
+    if (!clientId || user) {
       return;
     }
 
@@ -468,37 +467,40 @@ function App() {
         return;
       }
 
-      window.google.accounts.id.initialize({
-        client_id: clientId,
-        callback: (response) => {
-          if (!response?.credential) {
-            return;
-          }
+      if (!initializedRef.current) {
+        window.google.accounts.id.initialize({
+          client_id: clientId,
+          callback: (response) => {
+            if (!response?.credential) {
+              return;
+            }
 
-          try {
-            const base64Url = response.credential.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(
-              atob(base64)
-                .split('')
-                .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-                .join('')
-            );
-            const decoded = JSON.parse(jsonPayload);
-            
-            // Set REAL Google user data returned from Google OAuth
-            setUser({
-              name: decoded.name || decoded.given_name || 'Google User',
-              email: decoded.email,
-              picture: decoded.picture || '',
-            });
-            setAuthError('');
-          } catch (err) {
-            console.error('Failed to parse Google credential token:', err);
-            setAuthError('Unable to process Google login response.');
-          }
-        },
-      });
+            try {
+              const base64Url = response.credential.split('.')[1];
+              const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+              const jsonPayload = decodeURIComponent(
+                atob(base64)
+                  .split('')
+                  .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+                  .join('')
+              );
+              const decoded = JSON.parse(jsonPayload);
+              
+              // Set REAL Google user data returned from Google OAuth
+              setUser({
+                name: decoded.name || decoded.given_name || 'Google User',
+                email: decoded.email,
+                picture: decoded.picture || '',
+              });
+              setAuthError('');
+            } catch (err) {
+              console.error('Failed to parse Google credential token:', err);
+              setAuthError('Unable to process Google login response.');
+            }
+          },
+        });
+        initializedRef.current = true;
+      }
 
       setAuthReady(true);
 
@@ -512,32 +514,26 @@ function App() {
           text: 'signin_with',
           logo_alignment: 'left',
         });
-
-        window.google.accounts.id.prompt();
       }
     };
 
     if (window.google?.accounts?.id) {
       checkGoogle();
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client';
-    script.async = true;
-    script.defer = true;
-    script.onload = checkGoogle;
-    script.onerror = () => {
-      setAuthReady(false);
-      setAuthError('Google sign-in script failed to load.');
-    };
-    document.body.appendChild(script);
-
-    return () => {
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
+    } else {
+      let script = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
+      if (!script) {
+        script = document.createElement('script');
+        script.src = 'https://accounts.google.com/gsi/client';
+        script.async = true;
+        script.defer = true;
+        document.body.appendChild(script);
       }
-    };
+      const handleLoad = () => checkGoogle();
+      script.addEventListener('load', handleLoad);
+      return () => {
+        script.removeEventListener('load', handleLoad);
+      };
+    }
   }, [clientId, user]);
 
   if (user) {
