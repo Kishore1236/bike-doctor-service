@@ -454,6 +454,41 @@ function App() {
     }
   }, [user]);
 
+  // Fetch central user bookings from backend whenever user logs in
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchUserBookings = async () => {
+      try {
+        const queryParams = new URLSearchParams();
+        if (user.email) queryParams.append('email', user.email);
+        if (user.name) queryParams.append('name', user.name);
+
+        const apiUrl = (import.meta.env.VITE_API_URL || 'https://bike-doctor-backend-vert.vercel.app').replace(/\/$/, '');
+        const res = await fetch(`${apiUrl}/api/payment/user-bookings?${queryParams.toString()}`);
+        if (!res.ok) return;
+
+        const data = await res.json();
+        if (data.success && Array.isArray(data.bookings) && data.bookings.length > 0) {
+          setBookingsHistory((prev) => {
+            const map = new Map();
+            data.bookings.forEach((item) => map.set(item.bookingId, item));
+            prev.forEach((item) => map.set(item.bookingId, item));
+            const merged = Array.from(map.values());
+            try {
+              localStorage.setItem('bikeDoctor_history', JSON.stringify(merged));
+            } catch (e) {}
+            return merged;
+          });
+        }
+      } catch (err) {
+        console.warn('Could not fetch remote user bookings:', err.message);
+      }
+    };
+
+    fetchUserBookings();
+  }, [user]);
+
   const initializedRef = useRef(false);
 
   useEffect(() => {
