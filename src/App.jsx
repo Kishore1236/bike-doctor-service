@@ -454,6 +454,52 @@ function App() {
     }
   }, [user]);
 
+  // Auto-upload unsynced local bookings to central backend/Google Sheets when user logs in
+  useEffect(() => {
+    if (!user) return;
+
+    const syncLocalToBackend = async () => {
+      try {
+        const stored = localStorage.getItem('bikeDoctor_history');
+        if (!stored) return;
+        const localList = JSON.parse(stored);
+        if (!Array.isArray(localList) || localList.length === 0) return;
+
+        const apiUrl = (import.meta.env.VITE_API_URL || 'https://bike-doctor-backend-vert.vercel.app').replace(/\/$/, '');
+
+        let countSynced = 0;
+        for (const item of localList) {
+          if (!item._synced) {
+            try {
+              const payloadDetails = {
+                ...item,
+                name: item.name || user.name || 'Customer',
+                email: item.email || user.email || '',
+                mobile: item.phone || item.mobile || '',
+              };
+              await fetch(`${apiUrl}/api/payment/pay-at-service`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ bookingDetails: payloadDetails }),
+              });
+              item._synced = true;
+              countSynced++;
+            } catch (e) {
+              console.warn('Auto-sync item failed:', e.message);
+            }
+          }
+        }
+        if (countSynced > 0) {
+          localStorage.setItem('bikeDoctor_history', JSON.stringify(localList));
+        }
+      } catch (err) {
+        console.warn('Sync local bookings error:', err);
+      }
+    };
+
+    syncLocalToBackend();
+  }, [user]);
+
   // Fetch central user bookings from backend whenever user logs in
   useEffect(() => {
     if (!user) return;

@@ -53,9 +53,20 @@ export default async function handler(req, res) {
       const paymentMethod = getVal(12) || 'Pay at Service';
       const paymentStatus = getVal(13) || (paymentMethod.toLowerCase().includes('paid') || paymentMethod.toLowerCase().includes('online') ? 'PAID' : 'Pending');
 
-      const matchesEmail = searchEmail && (rowName.toLowerCase().includes(searchEmail) || location.toLowerCase().includes(searchEmail));
+      const emailUser = searchEmail ? searchEmail.split('@')[0] : '';
+      const rName = rowName.toLowerCase();
+      const bOwner = bikeOwnerName.toLowerCase();
+
+      const matchesEmail = searchEmail && (
+        (rName && (rName.includes(searchEmail) || searchEmail.includes(rName))) ||
+        (emailUser && emailUser.length > 2 && rName && (rName.includes(emailUser) || emailUser.includes(rName))) ||
+        location.toLowerCase().includes(searchEmail)
+      );
       const matchesPhone = searchPhone && (mobile.includes(searchPhone) || altMobile.includes(searchPhone));
-      const matchesName = searchName && (rowName.toLowerCase().includes(searchName) || bikeOwnerName.toLowerCase().includes(searchName));
+      const matchesName = searchName && (
+        (rName && (rName.includes(searchName) || searchName.includes(rName))) ||
+        (bOwner && (bOwner.includes(searchName) || searchName.includes(bOwner)))
+      );
 
       const isMatch = (!searchEmail && !searchPhone && !searchName) || matchesEmail || matchesPhone || matchesName;
 
