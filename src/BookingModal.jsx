@@ -74,7 +74,10 @@ function BookingModal({ isOpen, onClose, selectedService = 'Complete Service', b
     const rawLandmark = formData.landmark.trim();
     const locationWithEmail = rawLandmark.includes('@') ? rawLandmark : `${rawLandmark}${userEmailTag}`;
 
+    const bookingId = `BK${Date.now().toString().slice(-6)}${Math.floor(1000 + Math.random() * 9000)}`;
+
     const payload = {
+      bookingId,
       name: formData.name.trim(),
       customerName: formData.name.trim(),
       email: user?.email || '',
@@ -129,6 +132,13 @@ function BookingModal({ isOpen, onClose, selectedService = 'Complete Service', b
       'Plan': fullPlanLabel,
     };
 
+    setSubmitting(false);
+
+    if (onProceedToPayment) {
+      onProceedToPayment(payload);
+      return;
+    }
+
     const customerScriptUrl = import.meta.env.VITE_GOOGLE_CUSTOMER_SCRIPT_URL;
     const bookingScriptUrl = import.meta.env.VITE_GOOGLE_BOOKING_SCRIPT_URL || import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz-7FfKmE6FgZGxs75wMK-QuFuP97U915UAy9Ukeo5JxlgqwYoevb25RQKHFFZkunjw/exec';
 
@@ -152,13 +162,6 @@ function BookingModal({ isOpen, onClose, selectedService = 'Complete Service', b
       } catch (err) {
         console.error(`Failed to register booking in Google Sheet (${url}):`, err);
       }
-    }
-
-    setSubmitting(false);
-
-    if (onProceedToPayment) {
-      onProceedToPayment(payload);
-      return;
     }
 
     alert(`Booking confirmed for ${currentService}!\nTotal Amount: ₹${totalEstimatedAmount}\nYour booking details have been registered in the Google Sheet.`);

@@ -228,7 +228,7 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
       serviceName: displayService,
     };
 
-    let bookingId = `BK${Date.now().toString().slice(-6)}${Math.floor(1000 + Math.random() * 9000)}`;
+    let bookingId = bookingDetails?.bookingId || `BK${Date.now().toString().slice(-6)}${Math.floor(1000 + Math.random() * 9000)}`;
 
     try {
       const res = await fetch(`${API_URL}/api/payment/pay-at-service`, {

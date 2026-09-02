@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   try {
     const { bookingDetails } = req.body || {};
 
-    const bookingId = `BK${Date.now().toString().slice(-6)}${Math.floor(1000 + Math.random() * 9000)}`;
+    const bookingId = bookingDetails?.bookingId || `BK${Date.now().toString().slice(-6)}${Math.floor(1000 + Math.random() * 9000)}`;
     const formattedAmount = bookingDetails?.totalAmount || '₹319';
 
     // Submit confirmed Pay at Service record to Google Sheets via Google Script URLs
