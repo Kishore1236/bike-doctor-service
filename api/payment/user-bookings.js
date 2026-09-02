@@ -79,7 +79,7 @@ export default async function handler(req, res) {
       let isExactEmailMatch = false;
       for (let i = 0; i < cells.length; i++) {
         const val = getVal(i).toLowerCase();
-        if (val === userEmail) {
+        if (val === userEmail || (userEmail.includes('@') && val.includes(userEmail))) {
           isExactEmailMatch = true;
           break;
         }
@@ -108,7 +108,8 @@ export default async function handler(req, res) {
 
         const rowName = getVal(1);
         const pickupType = getVal(2);
-        const location = getVal(3);
+        const rawLocation = getVal(3);
+        const cleanLocation = rawLocation.replace(/\s*\|\s*[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/gi, '').trim();
         const mobile = getVal(4);
         const timeSlot = getVal(8);
         const bikeModel = getVal(9);
@@ -124,7 +125,7 @@ export default async function handler(req, res) {
           customerName: rowName || verifiedUser?.name || 'Customer',
           email: emailVal || userEmail,
           phone: mobile,
-          location,
+          location: cleanLocation || rawLocation,
           locationType: pickupType,
           timeSlot: timeSlot || 'Scheduled Slot',
           bikeModel: bikeModel || 'Bike Service',

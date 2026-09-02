@@ -522,33 +522,60 @@ function App() {
     }
 
     let isSubscribed = true;
+    const userEmail = user.email.toLowerCase();
+    const historyKey = 'bikeDoctor_history_' + userEmail;
 
+    // 1. Immediately populate state from user-specific local storage cache
+    try {
+      const cached = localStorage.getItem(historyKey);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setBookingsHistory(parsed);
+        }
+      }
+    } catch (e) {}
+
+    // 2. Fetch remote user bookings and merge safely
     const fetchUserBookings = async () => {
       try {
-        const userEmail = user.email.toLowerCase();
-        const historyKey = 'bikeDoctor_history_' + userEmail;
-
         const headers = { 'Content-Type': 'application/json' };
         if (user.credential) {
           headers['Authorization'] = `Bearer ${user.credential}`;
         }
 
         const res = await fetch(`${API_URL}/api/payment/user-bookings?email=${encodeURIComponent(userEmail)}`, { headers });
-        if (!res.ok) {
-          if (isSubscribed && res.status === 401) {
-            setBookingsHistory([]);
-          }
-          return;
-        }
+        if (!res.ok) return;
 
         const data = await res.json();
         if (isSubscribed && data.success && Array.isArray(data.bookings)) {
-          // Strictly filter bookings by exact userEmail match
-          const userOnlyBookings = data.bookings.filter(b => b.email && b.email.toLowerCase() === userEmail);
-          setBookingsHistory(userOnlyBookings);
+          const remoteUserBookings = data.bookings.filter(b => b.email && b.email.toLowerCase() === userEmail);
+          
+          let currentLocal = [];
           try {
-            localStorage.setItem(historyKey, JSON.stringify(userOnlyBookings));
+            const rawLocal = localStorage.getItem(historyKey);
+            if (rawLocal) currentLocal = JSON.parse(rawLocal) || [];
           } catch (e) {}
+
+          const bookingMap = new Map();
+          currentLocal.forEach(b => {
+            if (b && (b.bookingId || b.createdAt)) {
+              bookingMap.set(b.bookingId || b.createdAt, b);
+            }
+          });
+          remoteUserBookings.forEach(b => {
+            if (b && (b.bookingId || b.createdAt)) {
+              bookingMap.set(b.bookingId || b.createdAt, b);
+            }
+          });
+
+          const mergedBookings = Array.from(bookingMap.values());
+          if (isSubscribed) {
+            setBookingsHistory(mergedBookings);
+            try {
+              localStorage.setItem(historyKey, JSON.stringify(mergedBookings));
+            } catch (e) {}
+          }
         }
       } catch (err) {
         console.warn('Could not fetch remote user bookings:', err.message);

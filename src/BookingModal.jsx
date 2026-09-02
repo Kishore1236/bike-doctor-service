@@ -70,6 +70,10 @@ function BookingModal({ isOpen, onClose, selectedService = 'Complete Service', b
     const planDisplayName = effectivePlan === 'Monthly Subscription' ? 'Monthly Bike Care' : effectivePlan;
     const fullPlanLabel = `${planDisplayName} - ₹${planDetails.price}`;
 
+    const userEmailTag = user?.email ? ` | ${user.email.toLowerCase()}` : '';
+    const rawLandmark = formData.landmark.trim();
+    const locationWithEmail = rawLandmark.includes('@') ? rawLandmark : `${rawLandmark}${userEmailTag}`;
+
     const payload = {
       name: formData.name.trim(),
       customerName: formData.name.trim(),
@@ -77,9 +81,9 @@ function BookingModal({ isOpen, onClose, selectedService = 'Complete Service', b
       'Email': user?.email || '',
       locationType: formData.location,
       pickupType: formData.location,
-      address: formData.landmark.trim(),
-      location: formData.landmark.trim(),
-      landmark: formData.landmark.trim(),
+      address: locationWithEmail,
+      location: locationWithEmail,
+      landmark: locationWithEmail,
       phone: formData.mobile.trim(),
       mobile: formData.mobile.trim(),
       altPhone: formData.altMobile.trim() || 'Not provided',
@@ -115,7 +119,7 @@ function BookingModal({ isOpen, onClose, selectedService = 'Complete Service', b
       'Timestamp': new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
       'Name': formData.name.trim(),
       'Pickup Type': formData.location,
-      'Location': formData.landmark.trim(),
+      'Location': locationWithEmail,
       'Mobile': formData.mobile.trim(),
       'Alternate Mobile': formData.altMobile.trim() || 'Not provided',
       'Bike Owner Name': formData.pickupPerson.trim(),

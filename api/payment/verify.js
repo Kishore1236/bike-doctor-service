@@ -48,6 +48,10 @@ export default async function handler(req, res) {
 
     const formattedTimestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
 
+    const userEmailVal = bookingDetails?.email ? String(bookingDetails.email).trim().toLowerCase() : '';
+    const rawLoc = bookingDetails?.landmark || bookingDetails?.location || bookingDetails?.address || '';
+    const locWithEmail = (userEmailVal && !rawLoc.toLowerCase().includes(userEmailVal)) ? `${rawLoc} | ${userEmailVal}` : rawLoc;
+
     const payload = {
       bookingId,
       name: bookingDetails?.name || bookingDetails?.pickupPerson || 'Customer',
@@ -70,10 +74,10 @@ export default async function handler(req, res) {
       receiverName: bookingDetails?.receiverName || bookingDetails?.receiver || 'Not provided',
       alternateContactPerson: bookingDetails?.receiverName || bookingDetails?.receiver || 'Not provided',
       'Alternate Contact person': bookingDetails?.receiverName || bookingDetails?.receiver || 'Not provided',
-      location: bookingDetails?.landmark || bookingDetails?.location || bookingDetails?.address || '',
-      address: bookingDetails?.landmark || bookingDetails?.location || bookingDetails?.address || '',
-      landmark: bookingDetails?.landmark || bookingDetails?.location || bookingDetails?.address || '',
-      'Location': bookingDetails?.landmark || bookingDetails?.location || bookingDetails?.address || '',
+      location: locWithEmail,
+      address: locWithEmail,
+      landmark: locWithEmail,
+      'Location': locWithEmail,
       locationType: bookingDetails?.locationType || bookingDetails?.pickupType || 'home',
       pickupType: bookingDetails?.pickupType || bookingDetails?.locationType || 'home',
       'Pickup Type': bookingDetails?.pickupType || bookingDetails?.locationType || 'home',
