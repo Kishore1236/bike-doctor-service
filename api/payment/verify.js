@@ -54,6 +54,7 @@ export default async function handler(req, res) {
       customerName: bookingDetails?.name || bookingDetails?.pickupPerson || 'Customer',
       'Name': bookingDetails?.name || bookingDetails?.pickupPerson || 'Customer',
       email: bookingDetails?.email || 'Not provided',
+      'Email': bookingDetails?.email || 'Not provided',
       phone: bookingDetails?.mobile || bookingDetails?.phone || '',
       mobile: bookingDetails?.mobile || bookingDetails?.phone || '',
       'Mobile': bookingDetails?.mobile || bookingDetails?.phone || '',

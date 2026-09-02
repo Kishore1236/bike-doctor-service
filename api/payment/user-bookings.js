@@ -116,12 +116,13 @@ export default async function handler(req, res) {
         const bookingId = getVal(11) || `BK_HIST_${index + 1}`;
         const paymentMethod = getVal(12) || 'Pay at Service';
         const paymentStatus = getVal(13) || (paymentMethod.toLowerCase().includes('paid') || paymentMethod.toLowerCase().includes('online') ? 'PAID' : 'Pending');
+        const emailVal = getVal(14) || userEmail;
 
         matchedBookings.push({
           bookingId,
           name: rowName || verifiedUser?.name || 'Customer',
           customerName: rowName || verifiedUser?.name || 'Customer',
-          email: userEmail,
+          email: emailVal || userEmail,
           phone: mobile,
           location,
           locationType: pickupType,

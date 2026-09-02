@@ -174,6 +174,7 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
                 timeSlot: bookingDetails?.timeSlot || '09:00 AM - 11:00 AM',
                 name: bookingDetails?.name || bookingDetails?.pickupPerson || 'Customer',
                 customerName: bookingDetails?.name || bookingDetails?.pickupPerson || 'Customer',
+                email: bookingDetails?.email || '',
                 phone: bookingDetails?.mobile || bookingDetails?.phone || '',
                 location: bookingDetails?.landmark || bookingDetails?.location || '',
                 paymentMethod: `Pay Online (${paymentMethod.toUpperCase()})`,
@@ -256,6 +257,7 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
       timeSlot: bookingDetails?.timeSlot || '09:00 AM - 11:00 AM',
       name: bookingDetails?.name || bookingDetails?.pickupPerson || 'Customer',
       customerName: bookingDetails?.name || bookingDetails?.pickupPerson || 'Customer',
+      email: bookingDetails?.email || '',
       phone: bookingDetails?.mobile || bookingDetails?.phone || '',
       location: bookingDetails?.landmark || bookingDetails?.location || '',
       paymentMethod: 'Pay at Service',
@@ -519,6 +521,8 @@ function App() {
       return;
     }
 
+    let isSubscribed = true;
+
     const fetchUserBookings = async () => {
       try {
         const userEmail = user.email.toLowerCase();
@@ -531,14 +535,14 @@ function App() {
 
         const res = await fetch(`${API_URL}/api/payment/user-bookings?email=${encodeURIComponent(userEmail)}`, { headers });
         if (!res.ok) {
-          if (res.status === 401) {
+          if (isSubscribed && res.status === 401) {
             setBookingsHistory([]);
           }
           return;
         }
 
         const data = await res.json();
-        if (data.success && Array.isArray(data.bookings)) {
+        if (isSubscribed && data.success && Array.isArray(data.bookings)) {
           // Strictly filter bookings by exact userEmail match
           const userOnlyBookings = data.bookings.filter(b => b.email && b.email.toLowerCase() === userEmail);
           setBookingsHistory(userOnlyBookings);
@@ -552,6 +556,10 @@ function App() {
     };
 
     fetchUserBookings();
+
+    return () => {
+      isSubscribed = false;
+    };
   }, [user]);
 
   const initializedRef = useRef(false);
@@ -663,10 +671,14 @@ function App() {
         <>
           <BookingModal
             isOpen={true}
+            user={user}
             selectedService={selectedService}
             onClose={() => setCurrentPage('dashboard')}
             onProceedToPayment={(details) => {
-              setBookingDetails(details);
+              setBookingDetails({
+                ...details,
+                email: user?.email || details?.email || '',
+              });
               setCurrentPage('payment');
             }}
           />

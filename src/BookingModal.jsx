@@ -1,14 +1,14 @@
 import { useMemo, useState, useEffect } from 'react';
 import { plans, services, charges } from './data';
 
-function BookingModal({ isOpen, onClose, selectedService = 'Complete Service', bookingType = 'service', onProceedToPayment }) {
+function BookingModal({ isOpen, onClose, selectedService = 'Complete Service', bookingType = 'service', onProceedToPayment, user }) {
   const [formData, setFormData] = useState({
-    name: '',
+    name: user?.name || '',
     location: 'home',
     landmark: '',
     mobile: '',
     altMobile: '',
-    pickupPerson: '',
+    pickupPerson: user?.name || '',
     receiverName: '',
     bikeModel: '',
     timeSlot: '09:00 AM - 11:00 AM',
@@ -73,6 +73,8 @@ function BookingModal({ isOpen, onClose, selectedService = 'Complete Service', b
     const payload = {
       name: formData.name.trim(),
       customerName: formData.name.trim(),
+      email: user?.email || '',
+      'Email': user?.email || '',
       locationType: formData.location,
       pickupType: formData.location,
       address: formData.landmark.trim(),
