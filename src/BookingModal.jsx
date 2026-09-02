@@ -64,6 +64,7 @@ function BookingModal({ isOpen, onClose, selectedService = 'Complete Service', b
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (submitting) return;
     setSubmitting(true);
 
     const planDisplayName = effectivePlan === 'Monthly Subscription' ? 'Monthly Bike Care' : effectivePlan;

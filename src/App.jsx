@@ -86,6 +86,7 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
   const displayTotal = bookingDetails?.totalAmount || '₹319';
 
   const handlePayOnline = async () => {
+    if (processing) return;
     setErrorMsg('');
     if (!window.Razorpay) {
       setErrorMsg('Razorpay SDK failed to load. Please refresh the page or check your internet connection.');
@@ -213,6 +214,7 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
   };
 
   const handlePayAtService = async () => {
+    if (processing) return;
     setErrorMsg('');
     setProcessing(true);
 
@@ -422,18 +424,28 @@ function App() {
   const [isMyBookingsOpen, setIsMyBookingsOpen] = useState(false);
   const [bookingsHistory, setBookingsHistory] = useState(() => {
     try {
-      const stored = localStorage.getItem('bikeDoctor_history');
-      if (stored) return JSON.parse(stored);
+      const storedUser = localStorage.getItem('bikeDoctor_user');
+      if (storedUser) {
+        const u = JSON.parse(storedUser);
+        if (u?.email) {
+          const stored = localStorage.getItem('bikeDoctor_history_' + u.email.toLowerCase());
+          if (stored) return JSON.parse(stored);
+        }
+      }
     } catch (e) {}
     return [];
   });
 
   const addBookingToHistory = (newBooking) => {
+    const userEmail = user?.email ? user.email.toLowerCase() : '';
+    const bookingWithEmail = { ...newBooking, email: userEmail || newBooking.email || '' };
     setBookingsHistory((prev) => {
-      const updated = [newBooking, ...prev];
-      try {
-        localStorage.setItem('bikeDoctor_history', JSON.stringify(updated));
-      } catch (e) {}
+      const updated = [bookingWithEmail, ...prev];
+      if (userEmail) {
+        try {
+          localStorage.setItem('bikeDoctor_history_' + userEmail, JSON.stringify(updated));
+        } catch (e) {}
+      }
       return updated;
     });
   };
@@ -502,29 +514,37 @@ function App() {
 
   // Fetch central user bookings from backend whenever user logs in
   useEffect(() => {
-    if (!user) return;
+    if (!user || !user.email) {
+      setBookingsHistory([]);
+      return;
+    }
 
     const fetchUserBookings = async () => {
       try {
-        const queryParams = new URLSearchParams();
-        if (user.email) queryParams.append('email', user.email);
-        if (user.name) queryParams.append('name', user.name);
+        const userEmail = user.email.toLowerCase();
+        const historyKey = 'bikeDoctor_history_' + userEmail;
 
-        const res = await fetch(`${API_URL}/api/payment/user-bookings?${queryParams.toString()}`);
-        if (!res.ok) return;
+        const headers = { 'Content-Type': 'application/json' };
+        if (user.credential) {
+          headers['Authorization'] = `Bearer ${user.credential}`;
+        }
+
+        const res = await fetch(`${API_URL}/api/payment/user-bookings?email=${encodeURIComponent(userEmail)}`, { headers });
+        if (!res.ok) {
+          if (res.status === 401) {
+            setBookingsHistory([]);
+          }
+          return;
+        }
 
         const data = await res.json();
-        if (data.success && Array.isArray(data.bookings) && data.bookings.length > 0) {
-          setBookingsHistory((prev) => {
-            const map = new Map();
-            data.bookings.forEach((item) => map.set(item.bookingId, item));
-            prev.forEach((item) => map.set(item.bookingId, item));
-            const merged = Array.from(map.values());
-            try {
-              localStorage.setItem('bikeDoctor_history', JSON.stringify(merged));
-            } catch (e) {}
-            return merged;
-          });
+        if (data.success && Array.isArray(data.bookings)) {
+          // Strictly filter bookings by exact userEmail match
+          const userOnlyBookings = data.bookings.filter(b => b.email && b.email.toLowerCase() === userEmail);
+          setBookingsHistory(userOnlyBookings);
+          try {
+            localStorage.setItem(historyKey, JSON.stringify(userOnlyBookings));
+          } catch (e) {}
         }
       } catch (err) {
         console.warn('Could not fetch remote user bookings:', err.message);
@@ -571,6 +591,7 @@ function App() {
                 name: decoded.name || decoded.given_name || 'Google User',
                 email: decoded.email,
                 picture: decoded.picture || '',
+                credential: response.credential,
               });
               setAuthError('');
             } catch (err) {
@@ -619,10 +640,13 @@ function App() {
   if (user) {
     const handleSignOut = () => {
       setUser(null);
+      setBookingsHistory([]);
       setCurrentPage('dashboard');
       setBookingType('service');
       setSelectedService('Complete Service');
       setAuthError('');
+      localStorage.removeItem('bikeDoctor_user');
+      localStorage.removeItem('bikeDoctor_history');
       if (window.google?.accounts?.id) {
         window.google.accounts.id.disableAutoSelect();
       }

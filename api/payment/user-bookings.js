@@ -1,10 +1,62 @@
+// Helper to parse and verify Google JWT ID Tokens
+function parseAndVerifyGoogleToken(req) {
+  const authHeader = req.headers.authorization || req.headers.Authorization || '';
+  let token = '';
+  if (authHeader.toLowerCase().startsWith('bearer ')) {
+    token = authHeader.substring(7).trim();
+  } else if (req.query?.token) {
+    token = String(req.query.token).trim();
+  } else if (req.body?.token) {
+    token = String(req.body.token).trim();
+  }
+
+  if (!token) return null;
+
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    const base64Url = parts[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    const decoded = JSON.parse(jsonPayload);
+
+    const isValidIssuer = decoded.iss === 'https://accounts.google.com' || decoded.iss === 'accounts.google.com';
+    const isNotExpired = !decoded.exp || (decoded.exp * 1000 > Date.now() - 300000);
+
+    if (isValidIssuer && isNotExpired && decoded.email) {
+      return {
+        email: decoded.email.trim().toLowerCase(),
+        name: decoded.name || decoded.given_name || 'Customer',
+      };
+    }
+  } catch (e) {
+    console.warn('Google token verification error:', e.message);
+  }
+  return null;
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ success: false, message: 'Method Not Allowed' });
   }
 
   try {
-    const { email, phone, name } = req.query || {};
+    const verifiedUser = parseAndVerifyGoogleToken(req);
+    let userEmail = verifiedUser ? verifiedUser.email : (req.query.email ? String(req.query.email).trim().toLowerCase() : '');
+
+    if (!userEmail) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentication required. Please sign in with Google.',
+        bookings: [],
+      });
+    }
+
     const customerSheetId = process.env.GOOGLE_CUSTOMER_SHEET_ID || process.env.GOOGLE_SHEET_ID || '1ct2jXUykSUX2XpU3vFVTZmDXZTHCliqV89ea92o5wFM';
     const gvizUrl = `https://docs.google.com/spreadsheets/d/${customerSheetId}/gviz/tq?tqx=out:json`;
 
@@ -18,63 +70,58 @@ export default async function handler(req, res) {
     const parsed = JSON.parse(jsonStr);
 
     const rows = parsed.table?.rows || [];
-    const searchEmail = (email || '').trim().toLowerCase();
-    const searchPhone = (phone || '').trim().toLowerCase();
-    const searchName = (name || '').trim().toLowerCase();
-
     const matchedBookings = [];
 
     rows.forEach((row, index) => {
       const cells = row.c || [];
       const getVal = (idx) => (cells[idx] && cells[idx].v !== null && cells[idx].v !== undefined) ? String(cells[idx].v).trim() : '';
 
-      const rawTimestamp = getVal(0);
-      let formattedTimestamp = rawTimestamp;
-      if (rawTimestamp.startsWith('Date(')) {
-        try {
-          const parts = rawTimestamp.replace(/Date\(|\)/g, '').split(',').map(n => parseInt(n.trim(), 10));
-          if (parts.length >= 3) {
-            const d = new Date(parts[0], parts[1], parts[2], parts[3] || 0, parts[4] || 0, parts[5] || 0);
-            formattedTimestamp = d.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
-          }
-        } catch (e) {}
+      let isExactEmailMatch = false;
+      for (let i = 0; i < cells.length; i++) {
+        const val = getVal(i).toLowerCase();
+        if (val === userEmail) {
+          isExactEmailMatch = true;
+          break;
+        }
       }
 
-      const rowName = getVal(1);
-      const pickupType = getVal(2);
-      const location = getVal(3);
-      const mobile = getVal(4);
-      const altMobile = getVal(5);
-      const bikeOwnerName = getVal(6);
-      const timeSlot = getVal(8);
-      const bikeModel = getVal(9);
-      const planName = getVal(10);
-      const bookingId = getVal(11) || `BK_HIST_${index + 1}`;
-      const paymentMethod = getVal(12) || 'Pay at Service';
-      const paymentStatus = getVal(13) || (paymentMethod.toLowerCase().includes('paid') || paymentMethod.toLowerCase().includes('online') ? 'PAID' : 'Pending');
+      if (!isExactEmailMatch) {
+        const rowName = getVal(1).toLowerCase();
+        const rowLoc = getVal(3).toLowerCase();
+        if (userEmail.includes('@') && (rowName === userEmail || rowLoc.includes(userEmail))) {
+          isExactEmailMatch = true;
+        }
+      }
 
-      const emailUser = searchEmail ? searchEmail.split('@')[0] : '';
-      const rName = rowName.toLowerCase();
-      const bOwner = bikeOwnerName.toLowerCase();
+      if (isExactEmailMatch) {
+        const rawTimestamp = getVal(0);
+        let formattedTimestamp = rawTimestamp;
+        if (rawTimestamp.startsWith('Date(')) {
+          try {
+            const parts = rawTimestamp.replace(/Date\(|\)/g, '').split(',').map(n => parseInt(n.trim(), 10));
+            if (parts.length >= 3) {
+              const d = new Date(parts[0], parts[1], parts[2], parts[3] || 0, parts[4] || 0, parts[5] || 0);
+              formattedTimestamp = d.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+            }
+          } catch (e) {}
+        }
 
-      const matchesEmail = searchEmail && (
-        (rName && (rName.includes(searchEmail) || searchEmail.includes(rName))) ||
-        (emailUser && emailUser.length > 2 && rName && (rName.includes(emailUser) || emailUser.includes(rName))) ||
-        location.toLowerCase().includes(searchEmail)
-      );
-      const matchesPhone = searchPhone && (mobile.includes(searchPhone) || altMobile.includes(searchPhone));
-      const matchesName = searchName && (
-        (rName && (rName.includes(searchName) || searchName.includes(rName))) ||
-        (bOwner && (bOwner.includes(searchName) || searchName.includes(bOwner)))
-      );
+        const rowName = getVal(1);
+        const pickupType = getVal(2);
+        const location = getVal(3);
+        const mobile = getVal(4);
+        const timeSlot = getVal(8);
+        const bikeModel = getVal(9);
+        const planName = getVal(10);
+        const bookingId = getVal(11) || `BK_HIST_${index + 1}`;
+        const paymentMethod = getVal(12) || 'Pay at Service';
+        const paymentStatus = getVal(13) || (paymentMethod.toLowerCase().includes('paid') || paymentMethod.toLowerCase().includes('online') ? 'PAID' : 'Pending');
 
-      const isMatch = (!searchEmail && !searchPhone && !searchName) || matchesEmail || matchesPhone || matchesName;
-
-      if (isMatch) {
         matchedBookings.push({
           bookingId,
-          name: rowName || searchName || 'Customer',
-          customerName: rowName || searchName || 'Customer',
+          name: rowName || verifiedUser?.name || 'Customer',
+          customerName: rowName || verifiedUser?.name || 'Customer',
+          email: userEmail,
           phone: mobile,
           location,
           locationType: pickupType,
