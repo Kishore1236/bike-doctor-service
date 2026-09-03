@@ -119,10 +119,22 @@ export default async function handler(req, res) {
       const bikeModel = getVal(9) || 'Bike Service';
       const planName = getVal(10) || 'Premium Care';
       const bookingId = getVal(11) || `BK_${index + 1}`;
-      const paymentMethod = getVal(12) || 'Pay at Service';
+      let paymentMethod = getVal(12) || 'Pay at Service';
       const rawStatus = getVal(13);
-      const paymentStatus = (rawStatus.toUpperCase() === 'PAID' || rawStatus.toUpperCase() === 'PAID ONLINE') ? 'PAID' : 'Pending';
+      let paymentStatus = (rawStatus.toUpperCase() === 'PAID' || rawStatus.toUpperCase() === 'PAID ONLINE') ? 'PAID' : 'Pending';
       const email = getVal(14) || 'Not provided';
+
+      const rowIndex = index + 2;
+      if (global.bookingStatusStore) {
+        const override = global.bookingStatusStore[bookingId] ||
+                         global.bookingStatusStore[String(bookingId).toLowerCase()] ||
+                         global.bookingStatusStore[`row_${rowIndex}`] ||
+                         (name ? global.bookingStatusStore[`name_${String(name).toLowerCase()}`] : null);
+        if (override) {
+          paymentStatus = override.paymentStatus || paymentStatus;
+          paymentMethod = override.paymentMethod || paymentMethod;
+        }
+      }
 
       // Extract exact numerical price from planName (e.g., "Premium Care - ₹299" -> 299)
       let numAmount = 299;

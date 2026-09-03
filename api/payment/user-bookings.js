@@ -119,8 +119,12 @@ export default async function handler(req, res) {
         let paymentStatus = getVal(13) || (paymentMethod.toLowerCase().includes('paid') || paymentMethod.toLowerCase().includes('online') ? 'PAID' : 'Pending');
         const emailVal = getVal(14) || userEmail;
 
+        const rowIndex = index + 2;
         if (global.bookingStatusStore) {
-          const override = global.bookingStatusStore[bookingId] || global.bookingStatusStore[bookingId.toLowerCase()];
+          const override = global.bookingStatusStore[bookingId] ||
+                           global.bookingStatusStore[String(bookingId).toLowerCase()] ||
+                           global.bookingStatusStore[`row_${rowIndex}`] ||
+                           (rowName ? global.bookingStatusStore[`name_${String(rowName).toLowerCase()}`] : null);
           if (override) {
             paymentStatus = override.paymentStatus || paymentStatus;
             paymentMethod = override.paymentMethod || paymentMethod;
