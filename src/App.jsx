@@ -545,44 +545,105 @@ function App() {
     }
   }, [user]);
 
-  // Auto-upload unsynced local bookings to central backend/Google Sheets when user logs in
+  // Auto-upload unsynced local bookings (e.g. Thunder bird) to Google Sheets when user opens app
   useEffect(() => {
     if (!user) return;
 
     const syncLocalToBackend = async () => {
-      try {
-        const stored = localStorage.getItem('bikeDoctor_history');
-        if (!stored) return;
-        const localList = JSON.parse(stored);
-        if (!Array.isArray(localList) || localList.length === 0) return;
+      const scriptUrl = import.meta.env.VITE_GOOGLE_BOOKING_SCRIPT_URL || import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz-7FfKmE6FgZGxs75wMK-QuFuP97U915UAy9Ukeo5JxlgqwYoevb25RQKHFFZkunjw/exec';
+      const userEmail = user.email ? user.email.toLowerCase() : '';
+      const historyKeys = ['bikeDoctor_history', 'bikeDoctor_history_' + userEmail].filter(Boolean);
 
-        let countSynced = 0;
-        for (const item of localList) {
-          if (!item._synced) {
-            try {
-              const payloadDetails = {
-                ...item,
-                name: item.name || user.name || 'Customer',
-                email: item.email || user.email || '',
-                mobile: item.phone || item.mobile || '',
-              };
-              await fetch(`${API_URL}/api/payment/pay-at-service`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ bookingDetails: payloadDetails }),
-              });
-              item._synced = true;
-              countSynced++;
-            } catch (e) {
-              console.warn('Auto-sync item failed:', e.message);
+      for (const key of historyKeys) {
+        try {
+          const stored = localStorage.getItem(key);
+          if (!stored) continue;
+          const localList = JSON.parse(stored);
+          if (!Array.isArray(localList) || localList.length === 0) continue;
+
+          let countSynced = 0;
+          for (const item of localList) {
+            if (!item._synced) {
+              try {
+                const formattedTimestamp = item.timestamp || item.createdAt || new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+                const rawLoc = item.location || item.address || item.landmark || '';
+                const userEmailVal = item.email || user.email || '';
+                const locWithEmail = (userEmailVal && !rawLoc.toLowerCase().includes(userEmailVal)) ? `${rawLoc} | ${userEmailVal}` : rawLoc;
+
+                const payload = {
+                  bookingId: item.bookingId || `BK${Date.now()}`,
+                  name: item.name || item.customerName || user.name || 'Customer',
+                  customerName: item.customerName || item.name || user.name || 'Customer',
+                  'Name': item.name || item.customerName || user.name || 'Customer',
+                  email: userEmailVal || 'Not provided',
+                  'Email': userEmailVal || 'Not provided',
+                  phone: item.phone || item.mobile || '',
+                  mobile: item.mobile || item.phone || '',
+                  'Mobile': item.mobile || item.phone || '',
+                  altPhone: item.altMobile || 'Not provided',
+                  altMobile: item.altMobile || 'Not provided',
+                  alternateMobile: item.altMobile || 'Not provided',
+                  'Alternate Mobile': item.altMobile || 'Not provided',
+                  pickupPerson: item.pickupPerson || item.name || user.name || '',
+                  pickupName: item.pickupPerson || item.name || user.name || '',
+                  bikeOwnerName: item.pickupPerson || item.name || user.name || '',
+                  'Bike Owner Name': item.pickupPerson || item.name || user.name || '',
+                  receiver: item.receiverName || item.receiver || 'Not provided',
+                  receiverName: item.receiverName || item.receiver || 'Not provided',
+                  alternateContactPerson: item.receiverName || item.receiver || 'Not provided',
+                  'Alternate Contact person': item.receiverName || item.receiver || 'Not provided',
+                  location: locWithEmail,
+                  address: locWithEmail,
+                  landmark: locWithEmail,
+                  'Location': locWithEmail,
+                  locationType: item.locationType || item.pickupType || 'home',
+                  pickupType: item.pickupType || item.locationType || 'home',
+                  'Pickup Type': item.pickupType || item.locationType || 'home',
+                  timeSlot: item.timeSlot || '09:00 AM - 11:00 AM',
+                  time_slot: item.timeSlot || '09:00 AM - 11:00 AM',
+                  'Time Slot': item.timeSlot || '09:00 AM - 11:00 AM',
+                  bikeModel: item.bikeModel || 'Bike Service',
+                  bike_model: item.bikeModel || 'Bike Service',
+                  'Bike Model': item.bikeModel || 'Bike Service',
+                  service: item.serviceName || item.service || 'Complete Service',
+                  plan: item.planName || item.plan || 'Premium Care',
+                  'Plan': item.planName || item.plan || 'Premium Care',
+                  amount: item.totalAmount || item.amount || '₹319',
+                  totalAmount: item.totalAmount || item.amount || '₹319',
+                  paymentMethod: item.paymentMethod || 'Pay at Service',
+                  paymentStatus: item.paymentStatus || 'Pending',
+                  bookingStatus: 'CONFIRMED',
+                  timestamp: formattedTimestamp,
+                  createdAt: formattedTimestamp,
+                  'Timestamp': formattedTimestamp,
+                };
+
+                const params = new URLSearchParams();
+                Object.entries(payload).forEach(([k, v]) => {
+                  if (v !== undefined && v !== null) params.append(k, String(v));
+                });
+                const fullUrl = `${scriptUrl}${scriptUrl.includes('?') ? '&' : '?'}${params.toString()}`;
+
+                await fetch(fullUrl, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'text/plain' },
+                  mode: 'no-cors',
+                  body: JSON.stringify(payload),
+                });
+
+                item._synced = true;
+                countSynced++;
+              } catch (e) {
+                console.warn('Auto-sync item failed:', e.message);
+              }
             }
           }
+          if (countSynced > 0) {
+            localStorage.setItem(key, JSON.stringify(localList));
+          }
+        } catch (err) {
+          console.warn('Sync local bookings error for key:', key, err);
         }
-        if (countSynced > 0) {
-          localStorage.setItem('bikeDoctor_history', JSON.stringify(localList));
-        }
-      } catch (err) {
-        console.warn('Sync local bookings error:', err);
       }
     };
 
