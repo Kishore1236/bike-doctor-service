@@ -32,7 +32,8 @@ function MyBookingsModal({ isOpen, onClose, bookings = [] }) {
                 const displayTotal = item.totalAmount || item.amount || '₹319';
                 const paymentMethod = item.paymentMethod || 'Pay at Service';
                 const paymentStatus = item.paymentStatus || (paymentMethod.includes('Online') || paymentMethod.includes('PAID') ? 'PAID' : 'Pending');
-                const isPaid = paymentStatus.toLowerCase() === 'paid';
+                const statusUpper = String(paymentStatus).toUpperCase();
+                const isPaid = statusUpper.includes('PAID') || statusUpper.includes('VERIFIED');
 
                 return (
                   <div key={bookingId + idx} className="booking-card-item">
@@ -42,7 +43,7 @@ function MyBookingsModal({ isOpen, onClose, bookings = [] }) {
                         <strong className="card-id-val">{bookingId}</strong>
                       </div>
                       <span className={`status-pill ${isPaid ? 'paid' : 'pending'}`}>
-                        {paymentStatus}
+                        {isPaid ? (paymentStatus.toUpperCase().includes('PAID') ? paymentStatus : 'PAID') : paymentStatus}
                       </span>
                     </div>
 

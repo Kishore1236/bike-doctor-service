@@ -124,7 +124,8 @@ export default async function handler(req, res) {
           const override = global.bookingStatusStore[bookingId] ||
                            global.bookingStatusStore[String(bookingId).toLowerCase()] ||
                            global.bookingStatusStore[`row_${rowIndex}`] ||
-                           (rowName ? global.bookingStatusStore[`name_${String(rowName).toLowerCase()}`] : null);
+                           (rowName ? global.bookingStatusStore[`name_${String(rowName).toLowerCase()}`] : null) ||
+                           (userEmail ? global.bookingStatusStore[`email_${String(userEmail).toLowerCase()}`] : null);
           if (override) {
             paymentStatus = override.paymentStatus || paymentStatus;
             paymentMethod = override.paymentMethod || paymentMethod;

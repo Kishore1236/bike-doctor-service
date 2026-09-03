@@ -737,7 +737,7 @@ function App() {
 
         const data = await res.json();
         if (isSubscribed && data.success && Array.isArray(data.bookings)) {
-          const remoteUserBookings = data.bookings.filter(b => b.email && b.email.toLowerCase() === userEmail);
+          const remoteUserBookings = data.bookings.filter(b => !b.email || b.email.toLowerCase() === userEmail);
           
           let currentLocal = [];
           try {
@@ -745,23 +745,39 @@ function App() {
             if (rawLocal) currentLocal = JSON.parse(rawLocal) || [];
           } catch (e) {}
 
-          const bookingMap = new Map();
-          currentLocal.forEach(b => {
-            if (b && (b.bookingId || b.createdAt)) {
-              bookingMap.set(b.bookingId || b.createdAt, b);
-            }
-          });
-          remoteUserBookings.forEach(b => {
-            if (b && (b.bookingId || b.createdAt)) {
-              bookingMap.set(b.bookingId || b.createdAt, b);
+          // Merge local and remote bookings with status priority to Remote/Admin status
+          const mergedList = [...currentLocal];
+
+          remoteUserBookings.forEach((remoteItem) => {
+            const remoteStatusUpper = String(remoteItem.paymentStatus || '').toUpperCase();
+            const remoteIsPaid = remoteStatusUpper.includes('PAID') || remoteStatusUpper.includes('VERIFIED');
+
+            // Find matching local item by ID or fuzzy attributes (bikeModel + timeSlot)
+            const matchIdx = mergedList.findIndex((loc) => {
+              if (loc.bookingId && remoteItem.bookingId && loc.bookingId === remoteItem.bookingId) return true;
+              if (loc.bikeModel && remoteItem.bikeModel && loc.bikeModel.toLowerCase() === remoteItem.bikeModel.toLowerCase() &&
+                  loc.timeSlot && remoteItem.timeSlot && loc.timeSlot === remoteItem.timeSlot) return true;
+              return false;
+            });
+
+            if (matchIdx !== -1) {
+              const existing = mergedList[matchIdx];
+              mergedList[matchIdx] = {
+                ...existing,
+                ...remoteItem,
+                bookingId: existing.bookingId || remoteItem.bookingId,
+                paymentStatus: remoteIsPaid ? remoteItem.paymentStatus : (existing.paymentStatus || remoteItem.paymentStatus),
+                paymentMethod: remoteIsPaid ? remoteItem.paymentMethod : (existing.paymentMethod || remoteItem.paymentMethod),
+              };
+            } else {
+              mergedList.unshift(remoteItem);
             }
           });
 
-          const mergedBookings = Array.from(bookingMap.values());
           if (isSubscribed) {
-            setBookingsHistory(mergedBookings);
+            setBookingsHistory(mergedList);
             try {
-              localStorage.setItem(historyKey, JSON.stringify(mergedBookings));
+              localStorage.setItem(historyKey, JSON.stringify(mergedList));
             } catch (e) {}
           }
         }
@@ -772,8 +788,19 @@ function App() {
 
     fetchUserBookings();
 
+    // Auto-poll user bookings while MyBookingsModal is open or on window focus
+    let pollInterval = null;
+    if (isMyBookingsOpen) {
+      pollInterval = setInterval(fetchUserBookings, 3000);
+    }
+
+    const handleFocus = () => fetchUserBookings();
+    window.addEventListener('focus', handleFocus);
+
     return () => {
       isSubscribed = false;
+      if (pollInterval) clearInterval(pollInterval);
+      window.removeEventListener('focus', handleFocus);
     };
   }, [user, isMyBookingsOpen]);
 

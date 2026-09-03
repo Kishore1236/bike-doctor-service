@@ -62,7 +62,7 @@ export default async function handler(req, res) {
       });
     }
 
-    const { bookingId, rowIndex, name, paymentStatus, paymentMethod } = req.body || {};
+    const { bookingId, rowIndex, name, email, paymentStatus, paymentMethod } = req.body || {};
 
     if (!bookingId) {
       return res.status(400).json({ success: false, message: 'Booking ID is required.' });
@@ -84,6 +84,7 @@ export default async function handler(req, res) {
     global.bookingStatusStore[bookingId.toLowerCase()] = storePayload;
     if (rowIndex) global.bookingStatusStore[`row_${rowIndex}`] = storePayload;
     if (name) global.bookingStatusStore[`name_${String(name).toLowerCase()}`] = storePayload;
+    if (email) global.bookingStatusStore[`email_${String(email).toLowerCase()}`] = storePayload;
 
     const bookingScriptUrl = process.env.GOOGLE_BOOKING_SCRIPT_URL || process.env.GOOGLE_SCRIPT_URL || process.env.VITE_GOOGLE_BOOKING_SCRIPT_URL || process.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz-7FfKmE6FgZGxs75wMK-QuFuP97U915UAy9Ukeo5JxlgqwYoevb25RQKHFFZkunjw/exec';
     const customerScriptUrl = process.env.GOOGLE_CUSTOMER_SCRIPT_URL || process.env.VITE_GOOGLE_CUSTOMER_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbxyCbvsvoQxXSpXjiJykrfWRyPy_fXSi4Ulr-zx7szw-R-VLLf8yY0HwVyHaLmXIHd8yw/exec';
