@@ -770,11 +770,13 @@ function App() {
             const remoteStatusUpper = String(remoteItem.paymentStatus || '').toUpperCase();
             const remoteIsPaid = remoteStatusUpper.includes('PAID') || remoteStatusUpper.includes('VERIFIED');
 
-            // Find matching local item by ID or fuzzy attributes (bikeModel + timeSlot)
+            // Find matching local item by ID, or by name/mobile/bikeModel/plan
             const matchIdx = mergedList.findIndex((loc) => {
-              if (loc.bookingId && remoteItem.bookingId && loc.bookingId === remoteItem.bookingId) return true;
-              if (loc.bikeModel && remoteItem.bikeModel && loc.bikeModel.toLowerCase() === remoteItem.bikeModel.toLowerCase() &&
-                  loc.timeSlot && remoteItem.timeSlot && loc.timeSlot === remoteItem.timeSlot) return true;
+              if (loc.bookingId && remoteItem.bookingId && (loc.bookingId === remoteItem.bookingId || loc.bookingId.toLowerCase() === remoteItem.bookingId.toLowerCase())) return true;
+              if (loc.mobile && remoteItem.mobile && loc.mobile.replace(/\D/g, '') === remoteItem.mobile.replace(/\D/g, '') && loc.mobile.length >= 7) return true;
+              if (loc.phone && remoteItem.phone && loc.phone.replace(/\D/g, '') === remoteItem.phone.replace(/\D/g, '') && loc.phone.length >= 7) return true;
+              if (loc.name && remoteItem.name && loc.name.trim().toLowerCase() === remoteItem.name.trim().toLowerCase()) return true;
+              if (loc.bikeModel && remoteItem.bikeModel && loc.bikeModel.trim().toLowerCase() === remoteItem.bikeModel.trim().toLowerCase()) return true;
               return false;
             });
 
@@ -783,7 +785,7 @@ function App() {
               mergedList[matchIdx] = {
                 ...existing,
                 ...remoteItem,
-                bookingId: existing.bookingId || remoteItem.bookingId,
+                bookingId: remoteIsPaid ? (remoteItem.bookingId || existing.bookingId) : (existing.bookingId || remoteItem.bookingId),
                 paymentStatus: remoteIsPaid ? remoteItem.paymentStatus : (existing.paymentStatus || remoteItem.paymentStatus),
                 paymentMethod: remoteIsPaid ? remoteItem.paymentMethod : (existing.paymentMethod || remoteItem.paymentMethod),
               };

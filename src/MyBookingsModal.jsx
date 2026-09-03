@@ -2,6 +2,38 @@ import React from 'react';
 import { downloadInvoicePDF } from './utils/invoiceGenerator';
 
 function MyBookingsModal({ isOpen, onClose, bookings = [] }) {
+  const uniqueBookings = React.useMemo(() => {
+    const list = [];
+    (bookings || []).forEach(item => {
+      if (!item) return;
+      const statusUpper = String(item.paymentStatus || '').toUpperCase();
+      const itemIsPaid = statusUpper.includes('PAID') || statusUpper.includes('VERIFIED');
+
+      const existingIdx = list.findIndex(b => {
+        if (b.bookingId && item.bookingId && (b.bookingId === item.bookingId || b.bookingId.toLowerCase() === item.bookingId.toLowerCase())) return true;
+        if (b.bikeModel && item.bikeModel && b.bikeModel.toLowerCase() === item.bikeModel.toLowerCase()) return true;
+        if (b.mobile && item.mobile && b.mobile.replace(/\D/g, '') === item.mobile.replace(/\D/g, '') && b.mobile.length >= 7) return true;
+        if (b.name && item.name && b.name.trim().toLowerCase() === item.name.trim().toLowerCase()) return true;
+        return false;
+      });
+
+      if (existingIdx !== -1) {
+        const existing = list[existingIdx];
+        const existingIsPaid = String(existing.paymentStatus || '').toUpperCase().includes('PAID') || String(existing.paymentStatus || '').toUpperCase().includes('VERIFIED');
+        list[existingIdx] = {
+          ...existing,
+          ...item,
+          bookingId: itemIsPaid ? (item.bookingId || existing.bookingId) : (existing.bookingId || item.bookingId),
+          paymentStatus: (itemIsPaid || existingIsPaid) ? (itemIsPaid ? item.paymentStatus : existing.paymentStatus) : (item.paymentStatus || existing.paymentStatus),
+          paymentMethod: itemIsPaid ? item.paymentMethod : (existing.paymentMethod || item.paymentMethod),
+        };
+      } else {
+        list.push({ ...item });
+      }
+    });
+    return list;
+  }, [bookings]);
+
   if (!isOpen) return null;
 
   return (
@@ -19,7 +51,7 @@ function MyBookingsModal({ isOpen, onClose, bookings = [] }) {
         </div>
 
         <div className="my-bookings-body">
-          {bookings.length === 0 ? (
+          {uniqueBookings.length === 0 ? (
             <div className="empty-bookings-state">
               <div className="empty-icon">🏍️</div>
               <h3>No bookings found yet</h3>
@@ -27,7 +59,7 @@ function MyBookingsModal({ isOpen, onClose, bookings = [] }) {
             </div>
           ) : (
             <div className="bookings-history-list">
-              {bookings.map((item, idx) => {
+              {uniqueBookings.map((item, idx) => {
                 const bookingId = item.bookingId || `BK${idx + 1000}`;
                 const displayTotal = item.totalAmount || item.amount || '₹319';
                 const paymentMethod = item.paymentMethod || 'Pay at Service';
