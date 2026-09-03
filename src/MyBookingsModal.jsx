@@ -19,13 +19,12 @@ function MyBookingsModal({ isOpen, onClose, bookings = [] }) {
 
       if (existingIdx !== -1) {
         const existing = list[existingIdx];
-        const existingIsPaid = String(existing.paymentStatus || '').toUpperCase().includes('PAID') || String(existing.paymentStatus || '').toUpperCase().includes('VERIFIED');
         list[existingIdx] = {
           ...existing,
           ...item,
-          bookingId: itemIsPaid ? (item.bookingId || existing.bookingId) : (existing.bookingId || item.bookingId),
-          paymentStatus: (itemIsPaid || existingIsPaid) ? (itemIsPaid ? item.paymentStatus : existing.paymentStatus) : (item.paymentStatus || existing.paymentStatus),
-          paymentMethod: itemIsPaid ? item.paymentMethod : (existing.paymentMethod || item.paymentMethod),
+          bookingId: item.bookingId || existing.bookingId,
+          paymentStatus: item.paymentStatus || existing.paymentStatus,
+          paymentMethod: item.paymentMethod || existing.paymentMethod,
         };
       } else {
         list.push({ ...item });

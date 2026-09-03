@@ -791,9 +791,9 @@ function App() {
               mergedList[matchIdx] = {
                 ...existing,
                 ...remoteItem,
-                bookingId: remoteIsPaid ? (remoteItem.bookingId || existing.bookingId) : (existing.bookingId || remoteItem.bookingId),
-                paymentStatus: remoteIsPaid ? remoteItem.paymentStatus : (existing.paymentStatus || remoteItem.paymentStatus),
-                paymentMethod: remoteIsPaid ? remoteItem.paymentMethod : (existing.paymentMethod || remoteItem.paymentMethod),
+                bookingId: remoteItem.bookingId || existing.bookingId,
+                paymentStatus: remoteItem.paymentStatus || existing.paymentStatus,
+                paymentMethod: remoteItem.paymentMethod || existing.paymentMethod,
               };
             } else {
               mergedList.unshift(remoteItem);
