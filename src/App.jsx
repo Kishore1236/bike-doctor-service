@@ -304,18 +304,28 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
         'Timestamp': formattedTimestamp,
       };
 
-      const params = new URLSearchParams();
-      Object.entries(directPayload).forEach(([k, v]) => {
-        if (v !== undefined && v !== null) params.append(k, String(v));
-      });
-      const fullScriptUrl = `${scriptUrl}${scriptUrl.includes('?') ? '&' : '?'}${params.toString()}`;
+      const scriptUrls = [
+        import.meta.env.VITE_GOOGLE_CUSTOMER_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbxyCbvsvoQxXSpXjiJykrfWRyPy_fXSi4Ulr-zx7szw-R-VLLf8yY0HwVyHaLmXIHd8yw/exec',
+        import.meta.env.VITE_GOOGLE_BOOKING_SCRIPT_URL || import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz-7FfKmE6FgZGxs75wMK-QuFuP97U915UAy9Ukeo5JxlgqwYoevb25RQKHFFZkunjw/exec'
+      ];
 
-      await fetch(fullScriptUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        mode: 'no-cors',
-        body: JSON.stringify(directPayload),
-      });
+      for (const sUrl of scriptUrls) {
+        if (!sUrl) continue;
+        try {
+          const params = new URLSearchParams();
+          Object.entries(directPayload).forEach(([k, v]) => {
+            if (v !== undefined && v !== null) params.append(k, String(v));
+          });
+          const fullScriptUrl = `${sUrl}${sUrl.includes('?') ? '&' : '?'}${params.toString()}`;
+
+          await fetch(fullScriptUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            mode: 'no-cors',
+            body: JSON.stringify(directPayload),
+          });
+        } catch (e) {}
+      }
     } catch (directErr) {
       console.warn('Direct Google Script client dispatch notice:', directErr);
     }
@@ -618,18 +628,28 @@ function App() {
                   'Timestamp': formattedTimestamp,
                 };
 
-                const params = new URLSearchParams();
-                Object.entries(payload).forEach(([k, v]) => {
-                  if (v !== undefined && v !== null) params.append(k, String(v));
-                });
-                const fullUrl = `${scriptUrl}${scriptUrl.includes('?') ? '&' : '?'}${params.toString()}`;
+                const scriptUrls = [
+                  import.meta.env.VITE_GOOGLE_CUSTOMER_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbxyCbvsvoQxXSpXjiJykrfWRyPy_fXSi4Ulr-zx7szw-R-VLLf8yY0HwVyHaLmXIHd8yw/exec',
+                  import.meta.env.VITE_GOOGLE_BOOKING_SCRIPT_URL || import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz-7FfKmE6FgZGxs75wMK-QuFuP97U915UAy9Ukeo5JxlgqwYoevb25RQKHFFZkunjw/exec'
+                ];
 
-                await fetch(fullUrl, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'text/plain' },
-                  mode: 'no-cors',
-                  body: JSON.stringify(payload),
-                });
+                for (const sUrl of scriptUrls) {
+                  if (!sUrl) continue;
+                  try {
+                    const params = new URLSearchParams();
+                    Object.entries(payload).forEach(([k, v]) => {
+                      if (v !== undefined && v !== null) params.append(k, String(v));
+                    });
+                    const fullUrl = `${sUrl}${sUrl.includes('?') ? '&' : '?'}${params.toString()}`;
+
+                    await fetch(fullUrl, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'text/plain' },
+                      mode: 'no-cors',
+                      body: JSON.stringify(payload),
+                    });
+                  } catch (e) {}
+                }
 
                 item._synced = true;
                 countSynced++;
