@@ -17,7 +17,9 @@ export default async function handler(req, res) {
 
     const userEmailVal = bookingDetails?.email ? String(bookingDetails.email).trim().toLowerCase() : '';
     const rawLoc = bookingDetails?.landmark || bookingDetails?.location || bookingDetails?.address || '';
-    const locWithEmail = (userEmailVal && !rawLoc.toLowerCase().includes(userEmailVal)) ? `${rawLoc} | ${userEmailVal}` : rawLoc;
+    const cleanLoc = rawLoc.replace(/\s*\|\s*[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/gi, '').trim();
+    const selectedTimeSlot = bookingDetails?.timeSlot || bookingDetails?.time_slot || bookingDetails?.timeslot || bookingDetails?.slot || bookingDetails?.time || '09:00 AM - 11:00 AM';
+    const selectedBikeModel = bookingDetails?.bikeModel || bookingDetails?.bike_model || bookingDetails?.bikemodel || bookingDetails?.bike || bookingDetails?.vehicle || bookingDetails?.vehicleModel || bookingDetails?.model || 'Bike Service';
 
     const payload = {
       bookingId,
@@ -41,21 +43,35 @@ export default async function handler(req, res) {
       receiverName: bookingDetails?.receiverName || bookingDetails?.receiver || 'Not provided',
       alternateContactPerson: bookingDetails?.receiverName || bookingDetails?.receiver || 'Not provided',
       'Alternate Contact person': bookingDetails?.receiverName || bookingDetails?.receiver || 'Not provided',
-      location: locWithEmail,
-      address: locWithEmail,
-      landmark: locWithEmail,
-      'Location': locWithEmail,
+      location: cleanLoc || rawLoc,
+      address: cleanLoc || rawLoc,
+      landmark: cleanLoc || rawLoc,
+      'Location': cleanLoc || rawLoc,
       locationType: bookingDetails?.locationType || bookingDetails?.pickupType || 'home',
       pickupType: bookingDetails?.pickupType || bookingDetails?.locationType || 'home',
       'Pickup Type': bookingDetails?.pickupType || bookingDetails?.locationType || 'home',
-      timeSlot: bookingDetails?.timeSlot || '',
-      time_slot: bookingDetails?.timeSlot || '',
-      'Time Slot': bookingDetails?.timeSlot || '',
-      bikeModel: bookingDetails?.bikeModel || '',
-      bike_model: bookingDetails?.bikeModel || '',
-      'Bike Model': bookingDetails?.bikeModel || '',
-      service: bookingDetails?.service || bookingDetails?.serviceName || 'Complete Service',
+      timeSlot: selectedTimeSlot,
+      time_slot: selectedTimeSlot,
+      timeslot: selectedTimeSlot,
+      slot: selectedTimeSlot,
+      time: selectedTimeSlot,
+      TimeSlot: selectedTimeSlot,
+      'Time Slot': selectedTimeSlot,
+      service: selectedTimeSlot,
+      bikeModel: selectedBikeModel,
+      bike_model: selectedBikeModel,
+      bikemodel: selectedBikeModel,
+      bike: selectedBikeModel,
+      model: selectedBikeModel,
+      vehicle: selectedBikeModel,
+      vehicleModel: selectedBikeModel,
+      vehicle_model: selectedBikeModel,
+      Vehicle: selectedBikeModel,
+      'Vehicle Model': selectedBikeModel,
+      'Bike Model': selectedBikeModel,
+      serviceName: bookingDetails?.service || bookingDetails?.serviceName || 'Complete Service',
       plan: bookingDetails?.plan || bookingDetails?.planName || 'Premium Care',
+      planName: bookingDetails?.plan || bookingDetails?.planName || 'Premium Care',
       'Plan': bookingDetails?.plan || bookingDetails?.planName || 'Premium Care',
       amount: formattedAmount,
       totalAmount: formattedAmount,
