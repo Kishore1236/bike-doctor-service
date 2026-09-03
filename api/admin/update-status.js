@@ -115,10 +115,10 @@ export default async function handler(req, res) {
         });
         const fullUrl = `${url}${url.includes('?') ? '&' : '?'}${params.toString()}`;
 
+        fetch(fullUrl, { mode: 'no-cors' }).catch(() => {});
         await fetch(fullUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          redirect: 'follow',
+          headers: { 'Content-Type': 'text/plain' },
           body: JSON.stringify(payload),
         });
       } catch (err) {
