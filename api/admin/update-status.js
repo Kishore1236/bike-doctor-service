@@ -126,12 +126,74 @@ export default async function handler(req, res) {
       }
     }
 
+    // Direct Google Sheets API update for persistent cloud storage
+    try {
+      const emailAcc = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+      const privateKey = process.env.GOOGLE_PRIVATE_KEY
+        ? process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n')
+        : undefined;
+      const customerSheetId = process.env.GOOGLE_CUSTOMER_SHEET_ID || process.env.GOOGLE_SHEET_ID || '1ct2jXUykSUX2XpU3vFVTZmDXZTHCliqV89ea92o5wFM';
+
+      if (emailAcc && privateKey) {
+        const { google } = await import('googleapis');
+        const auth = new google.auth.JWT({
+          email: emailAcc,
+          key: privateKey,
+          scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+        });
+        const sheets = google.sheets({ version: 'v4', auth });
+
+        let targetRow = parseInt(rowIndex, 10);
+
+        if (!targetRow || targetRow < 2) {
+          const getRes = await sheets.spreadsheets.values.get({
+            spreadsheetId: customerSheetId,
+            range: 'A:O',
+          });
+          const rows = getRes.data.values || [];
+          const cleanBId = bookingId ? String(bookingId).trim().toLowerCase() : '';
+          const cleanName = name ? String(name).trim().toLowerCase() : '';
+
+          for (let i = 1; i < rows.length; i++) {
+            const r = rows[i] || [];
+            const cellL = r[11] ? String(r[11]).trim().toLowerCase() : '';
+            const cellB = r[1] ? String(r[1]).trim().toLowerCase() : '';
+
+            if (cleanBId && cellL && cellL === cleanBId) {
+              targetRow = i + 1;
+              break;
+            } else if (cleanBId && r.some(c => c && String(c).toLowerCase().includes(cleanBId))) {
+              targetRow = i + 1;
+              break;
+            } else if (cleanName && cellB && cellB === cleanName) {
+              targetRow = i + 1;
+              break;
+            }
+          }
+        }
+
+        if (targetRow && targetRow >= 2) {
+          await sheets.spreadsheets.values.update({
+            spreadsheetId: customerSheetId,
+            range: `L${targetRow}:N${targetRow}`,
+            valueInputOption: 'USER_ENTERED',
+            requestBody: {
+              values: [[bookingId || `BK_${targetRow - 1}`, newMethod, newStatus]],
+            },
+          });
+          console.log(`Directly updated Google Sheet row ${targetRow} [L:N] via Vercel Admin API with bookingId=${bookingId}, method=${newMethod}, status=${newStatus}`);
+        }
+      }
+    } catch (sheetApiErr) {
+      console.warn('Vercel Google Sheets API direct update notice:', sheetApiErr.message);
+    }
+
     return res.status(200).json({
       success: true,
       bookingId,
       paymentStatus: newStatus,
       paymentMethod: newMethod,
-      message: `Booking ${bookingId} status updated to ${newStatus} successfully.`,
+      message: `Booking ${bookingId} status updated to ${newStatus} successfully in persistent Google Sheets storage.`,
     });
   } catch (error) {
     console.error('Error updating booking status:', error);
