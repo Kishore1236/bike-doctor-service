@@ -732,11 +732,29 @@ function App() {
           headers['Authorization'] = `Bearer ${user.credential}`;
         }
 
-        const res = await fetch(`${API_URL}/api/payment/user-bookings?email=${encodeURIComponent(userEmail)}`, { headers });
-        if (!res.ok) return;
+        const candidateUrls = [
+          'http://localhost:5000/api/payment/user-bookings',
+          API_URL ? `${API_URL}/api/payment/user-bookings` : '',
+          'https://bike-doctor-backend-vert.vercel.app/api/payment/user-bookings',
+          'https://bike-doctor-service.vercel.app/api/payment/user-bookings',
+        ].filter(Boolean);
 
-        const data = await res.json();
-        if (isSubscribed && data.success && Array.isArray(data.bookings)) {
+        let data = null;
+        for (const endpoint of candidateUrls) {
+          try {
+            const fullUrl = `${endpoint}${endpoint.includes('?') ? '&' : '?'}email=${encodeURIComponent(userEmail)}`;
+            const res = await fetch(fullUrl, { headers });
+            if (res.ok) {
+              const resJson = await res.json();
+              if (resJson && resJson.success && Array.isArray(resJson.bookings)) {
+                data = resJson;
+                if (resJson.bookings.length > 0) break;
+              }
+            }
+          } catch (e) {}
+        }
+
+        if (isSubscribed && data && data.success && Array.isArray(data.bookings)) {
           const remoteUserBookings = data.bookings.filter(b => !b.email || b.email.toLowerCase() === userEmail);
           
           let currentLocal = [];
