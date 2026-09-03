@@ -115,9 +115,16 @@ export default async function handler(req, res) {
 
     for (const url of scriptUrls) {
       try {
-        await fetch(url, {
+        const params = new URLSearchParams();
+        Object.entries(payload).forEach(([k, v]) => {
+          if (v !== undefined && v !== null) params.append(k, String(v));
+        });
+        const fullUrl = `${url}${url.includes('?') ? '&' : '?'}${params.toString()}`;
+
+        await fetch(fullUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          redirect: 'follow',
           body: JSON.stringify(payload),
         });
       } catch (err) {
