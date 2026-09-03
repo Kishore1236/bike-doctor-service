@@ -230,6 +230,8 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
 
     let bookingId = bookingDetails?.bookingId || `BK${Date.now().toString().slice(-6)}${Math.floor(1000 + Math.random() * 9000)}`;
 
+    const scriptUrl = import.meta.env.VITE_GOOGLE_BOOKING_SCRIPT_URL || import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz-7FfKmE6FgZGxs75wMK-QuFuP97U915UAy9Ukeo5JxlgqwYoevb25RQKHFFZkunjw/exec';
+
     try {
       const res = await fetch(`${API_URL}/api/payment/pay-at-service`, {
         method: 'POST',
@@ -237,12 +239,85 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
         body: JSON.stringify({ bookingDetails: payloadDetails }),
       });
 
-      const data = await res.json();
-      if (res.ok && data.success && data.bookingId) {
-        bookingId = data.bookingId;
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.bookingId) {
+          bookingId = data.bookingId;
+        }
       }
     } catch (err) {
       console.warn('Pay at Service API notice:', err.message);
+    }
+
+    // Direct Google Sheets client dispatch fallback
+    try {
+      const formattedTimestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+      const userEmailVal = bookingDetails?.email ? String(bookingDetails.email).trim().toLowerCase() : '';
+      const rawLoc = bookingDetails?.landmark || bookingDetails?.location || bookingDetails?.address || '';
+      const locWithEmail = (userEmailVal && !rawLoc.toLowerCase().includes(userEmailVal)) ? `${rawLoc} | ${userEmailVal}` : rawLoc;
+
+      const directPayload = {
+        bookingId,
+        name: bookingDetails?.name || bookingDetails?.pickupPerson || 'Customer',
+        customerName: bookingDetails?.name || bookingDetails?.pickupPerson || 'Customer',
+        'Name': bookingDetails?.name || bookingDetails?.pickupPerson || 'Customer',
+        email: bookingDetails?.email || 'Not provided',
+        'Email': bookingDetails?.email || 'Not provided',
+        phone: bookingDetails?.mobile || bookingDetails?.phone || '',
+        mobile: bookingDetails?.mobile || bookingDetails?.phone || '',
+        'Mobile': bookingDetails?.mobile || bookingDetails?.phone || '',
+        altPhone: bookingDetails?.altMobile || 'Not provided',
+        altMobile: bookingDetails?.altMobile || 'Not provided',
+        alternateMobile: bookingDetails?.altMobile || 'Not provided',
+        'Alternate Mobile': bookingDetails?.altMobile || 'Not provided',
+        pickupPerson: bookingDetails?.pickupPerson || bookingDetails?.name || '',
+        pickupName: bookingDetails?.pickupPerson || bookingDetails?.name || '',
+        bikeOwnerName: bookingDetails?.pickupPerson || bookingDetails?.name || '',
+        'Bike Owner Name': bookingDetails?.pickupPerson || bookingDetails?.name || '',
+        receiver: bookingDetails?.receiverName || bookingDetails?.receiver || 'Not provided',
+        receiverName: bookingDetails?.receiverName || bookingDetails?.receiver || 'Not provided',
+        alternateContactPerson: bookingDetails?.receiverName || bookingDetails?.receiver || 'Not provided',
+        'Alternate Contact person': bookingDetails?.receiverName || bookingDetails?.receiver || 'Not provided',
+        location: locWithEmail,
+        address: locWithEmail,
+        landmark: locWithEmail,
+        'Location': locWithEmail,
+        locationType: bookingDetails?.locationType || bookingDetails?.pickupType || 'home',
+        pickupType: bookingDetails?.pickupType || bookingDetails?.locationType || 'home',
+        'Pickup Type': bookingDetails?.pickupType || bookingDetails?.locationType || 'home',
+        timeSlot: bookingDetails?.timeSlot || '',
+        time_slot: bookingDetails?.timeSlot || '',
+        'Time Slot': bookingDetails?.timeSlot || '',
+        bikeModel: bookingDetails?.bikeModel || '',
+        bike_model: bookingDetails?.bikeModel || '',
+        'Bike Model': bookingDetails?.bikeModel || '',
+        service: displayService,
+        plan: planName,
+        'Plan': planName,
+        amount: displayTotal,
+        totalAmount: displayTotal,
+        paymentMethod: 'Pay at Service',
+        paymentStatus: 'Pending',
+        bookingStatus: 'CONFIRMED',
+        timestamp: formattedTimestamp,
+        createdAt: formattedTimestamp,
+        'Timestamp': formattedTimestamp,
+      };
+
+      const params = new URLSearchParams();
+      Object.entries(directPayload).forEach(([k, v]) => {
+        if (v !== undefined && v !== null) params.append(k, String(v));
+      });
+      const fullScriptUrl = `${scriptUrl}${scriptUrl.includes('?') ? '&' : '?'}${params.toString()}`;
+
+      await fetch(fullScriptUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        mode: 'no-cors',
+        body: JSON.stringify(directPayload),
+      });
+    } catch (directErr) {
+      console.warn('Direct Google Script client dispatch notice:', directErr);
     }
 
     const record = {
