@@ -543,12 +543,16 @@ function App() {
     const userEmail = user?.email ? user.email.toLowerCase() : '';
     const bookingWithEmail = { ...newBooking, email: userEmail || newBooking.email || '' };
     setBookingsHistory((prev) => {
-      const updated = [bookingWithEmail, ...prev];
+      const filtered = (prev || []).filter(b => b && b.bookingId !== bookingWithEmail.bookingId);
+      const updated = [bookingWithEmail, ...filtered];
       if (userEmail) {
         try {
           localStorage.setItem('bikeDoctor_history_' + userEmail, JSON.stringify(updated));
         } catch (e) {}
       }
+      try {
+        localStorage.setItem('bikeDoctor_history', JSON.stringify(updated));
+      } catch (e) {}
       return updated;
     });
   };
@@ -938,6 +942,7 @@ function App() {
             user={user}
             selectedService={selectedService}
             onClose={() => setCurrentPage('dashboard')}
+            onBookingCreated={(rec) => addBookingToHistory(rec)}
             onProceedToPayment={(details) => {
               setBookingDetails({
                 ...details,

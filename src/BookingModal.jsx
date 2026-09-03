@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import { plans, services, charges } from './data';
 
-function BookingModal({ isOpen, onClose, selectedService = 'Complete Service', bookingType = 'service', onProceedToPayment, user }) {
+function BookingModal({ isOpen, onClose, selectedService = 'Complete Service', bookingType = 'service', onProceedToPayment, user, onBookingCreated }) {
   const [formData, setFormData] = useState({
     name: user?.name || '',
     location: 'home',
@@ -161,6 +161,10 @@ function BookingModal({ isOpen, onClose, selectedService = 'Complete Service', b
       } catch (err) {
         console.error(`Failed to register booking in Google Sheet (${url}):`, err);
       }
+    }
+
+    if (onBookingCreated) {
+      onBookingCreated(payload);
     }
 
     alert(`Booking confirmed for ${currentService}!\nTotal Amount: ₹${totalEstimatedAmount}\nYour booking details have been registered in the Google Sheet.`);
