@@ -740,9 +740,11 @@ function App() {
         ].filter(Boolean);
 
         let data = null;
+        const userName = user?.name || '';
+        const userMobile = user?.phone || user?.mobile || '';
         for (const endpoint of candidateUrls) {
           try {
-            const fullUrl = `${endpoint}${endpoint.includes('?') ? '&' : '?'}email=${encodeURIComponent(userEmail)}`;
+            const fullUrl = `${endpoint}${endpoint.includes('?') ? '&' : '?'}email=${encodeURIComponent(userEmail)}&name=${encodeURIComponent(userName)}&mobile=${encodeURIComponent(userMobile)}`;
             const res = await fetch(fullUrl, { headers });
             if (res.ok) {
               const resJson = await res.json();
@@ -755,7 +757,7 @@ function App() {
         }
 
         if (isSubscribed && data && data.success && Array.isArray(data.bookings)) {
-          const remoteUserBookings = data.bookings.filter(b => !b.email || b.email.toLowerCase() === userEmail);
+          const remoteUserBookings = data.bookings;
           
           let currentLocal = [];
           try {

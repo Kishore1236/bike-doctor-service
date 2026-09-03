@@ -72,23 +72,41 @@ export default async function handler(req, res) {
     const rows = parsed.table?.rows || [];
     const matchedBookings = [];
 
+    const queryName = String(req.query.name || '').trim().toLowerCase();
+    const queryMobile = String(req.query.mobile || req.query.phone || '').replace(/\D/g, '');
+    const userEmailPrefix = userEmail.includes('@') ? userEmail.split('@')[0].toLowerCase() : userEmail.toLowerCase();
+
     rows.forEach((row, index) => {
       const cells = row.c || [];
       const getVal = (idx) => (cells[idx] && cells[idx].v !== null && cells[idx].v !== undefined) ? String(cells[idx].v).trim() : '';
 
       let isExactEmailMatch = false;
+
+      // 1. Check all cells for exact email or email prefix
       for (let i = 0; i < cells.length; i++) {
         const val = getVal(i).toLowerCase();
-        if (val === userEmail || (userEmail.includes('@') && val.includes(userEmail))) {
+        if (val === userEmail || (userEmail.includes('@') && val.includes(userEmail)) || (userEmailPrefix.length >= 4 && val.includes(userEmailPrefix))) {
           isExactEmailMatch = true;
           break;
         }
       }
 
+      // 2. Check name match (rowName column 1 or pickupPerson column 6)
       if (!isExactEmailMatch) {
         const rowName = getVal(1).toLowerCase();
-        const rowLoc = getVal(3).toLowerCase();
-        if (userEmail.includes('@') && (rowName === userEmail || rowLoc.includes(userEmail))) {
+        const pickupPerson = getVal(6).toLowerCase();
+        if (queryName && (rowName.includes(queryName) || queryName.includes(rowName) || pickupPerson.includes(queryName))) {
+          isExactEmailMatch = true;
+        } else if (userEmailPrefix.length >= 3 && (rowName.includes(userEmailPrefix) || userEmailPrefix.includes(rowName))) {
+          isExactEmailMatch = true;
+        }
+      }
+
+      // 3. Check mobile match (column 4 or column 5)
+      if (!isExactEmailMatch && queryMobile.length >= 7) {
+        const rowMobile = getVal(4).replace(/\D/g, '');
+        const altMobile = getVal(5).replace(/\D/g, '');
+        if (rowMobile.includes(queryMobile) || queryMobile.includes(rowMobile) || altMobile.includes(queryMobile)) {
           isExactEmailMatch = true;
         }
       }
