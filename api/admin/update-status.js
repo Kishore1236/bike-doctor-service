@@ -71,8 +71,23 @@ export default async function handler(req, res) {
     const newStatus = paymentStatus ? String(paymentStatus).toUpperCase() : 'PAID';
     const newMethod = paymentMethod || 'Pay Online (Admin Updated)';
 
+    // Save in global server memory store for immediate consistency
+    if (!global.bookingStatusStore) {
+      global.bookingStatusStore = {};
+    }
+    global.bookingStatusStore[bookingId] = {
+      paymentStatus: newStatus,
+      paymentMethod: newMethod,
+      updatedAt: Date.now(),
+    };
+    global.bookingStatusStore[bookingId.toLowerCase()] = {
+      paymentStatus: newStatus,
+      paymentMethod: newMethod,
+      updatedAt: Date.now(),
+    };
+
     const bookingScriptUrl = process.env.GOOGLE_BOOKING_SCRIPT_URL || process.env.GOOGLE_SCRIPT_URL || process.env.VITE_GOOGLE_BOOKING_SCRIPT_URL || process.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz-7FfKmE6FgZGxs75wMK-QuFuP97U915UAy9Ukeo5JxlgqwYoevb25RQKHFFZkunjw/exec';
-    const customerScriptUrl = process.env.GOOGLE_CUSTOMER_SCRIPT_URL || process.env.VITE_GOOGLE_CUSTOMER_SCRIPT_URL;
+    const customerScriptUrl = process.env.GOOGLE_CUSTOMER_SCRIPT_URL || process.env.VITE_GOOGLE_CUSTOMER_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbxyCbvsvoQxXSpXjiJykrfWRyPy_fXSi4Ulr-zx7szw-R-VLLf8yY0HwVyHaLmXIHd8yw/exec';
 
     const payload = {
       bookingId,
@@ -82,6 +97,7 @@ export default async function handler(req, res) {
       'Status': newStatus,
       paymentMethod: newMethod,
       'Payment Method': newMethod,
+      action: 'UPDATE_STATUS',
     };
 
     const scriptUrls = new Set();
@@ -93,9 +109,16 @@ export default async function handler(req, res) {
 
     for (const url of scriptUrls) {
       try {
-        await fetch(url, {
+        const params = new URLSearchParams();
+        Object.entries(payload).forEach(([k, v]) => {
+          if (v !== undefined && v !== null) params.append(k, String(v));
+        });
+        const fullUrl = `${url}${url.includes('?') ? '&' : '?'}${params.toString()}`;
+
+        await fetch(fullUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          redirect: 'follow',
           body: JSON.stringify(payload),
         });
       } catch (err) {
@@ -107,6 +130,7 @@ export default async function handler(req, res) {
       success: true,
       bookingId,
       paymentStatus: newStatus,
+      paymentMethod: newMethod,
       message: `Booking ${bookingId} status updated to ${newStatus} successfully.`,
     });
   } catch (error) {

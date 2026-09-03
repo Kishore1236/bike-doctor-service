@@ -775,7 +775,7 @@ function App() {
     return () => {
       isSubscribed = false;
     };
-  }, [user]);
+  }, [user, isMyBookingsOpen]);
 
   const initializedRef = useRef(false);
 

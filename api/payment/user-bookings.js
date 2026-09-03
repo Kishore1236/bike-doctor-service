@@ -115,9 +115,17 @@ export default async function handler(req, res) {
         const bikeModel = getVal(9);
         const planName = getVal(10);
         const bookingId = getVal(11) || `BK_HIST_${index + 1}`;
-        const paymentMethod = getVal(12) || 'Pay at Service';
-        const paymentStatus = getVal(13) || (paymentMethod.toLowerCase().includes('paid') || paymentMethod.toLowerCase().includes('online') ? 'PAID' : 'Pending');
+        let paymentMethod = getVal(12) || 'Pay at Service';
+        let paymentStatus = getVal(13) || (paymentMethod.toLowerCase().includes('paid') || paymentMethod.toLowerCase().includes('online') ? 'PAID' : 'Pending');
         const emailVal = getVal(14) || userEmail;
+
+        if (global.bookingStatusStore) {
+          const override = global.bookingStatusStore[bookingId] || global.bookingStatusStore[bookingId.toLowerCase()];
+          if (override) {
+            paymentStatus = override.paymentStatus || paymentStatus;
+            paymentMethod = override.paymentMethod || paymentMethod;
+          }
+        }
 
         matchedBookings.push({
           bookingId,
