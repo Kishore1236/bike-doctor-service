@@ -92,15 +92,9 @@ export default async function handler(req, res) {
 
     for (const url of scriptUrls) {
       try {
-        const params = new URLSearchParams();
-        Object.entries(payload).forEach(([k, v]) => {
-          if (v !== undefined && v !== null) params.append(k, String(v));
-        });
-        const fullUrl = `${url}${url.includes('?') ? '&' : '?'}${params.toString()}`;
-
-        await fetch(fullUrl, {
+        await fetch(url, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           redirect: 'follow',
           body: JSON.stringify(payload),
         });

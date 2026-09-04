@@ -331,15 +331,9 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
       for (const sUrl of scriptUrls) {
         if (!sUrl) continue;
         try {
-          const params = new URLSearchParams();
-          Object.entries(directPayload).forEach(([k, v]) => {
-            if (v !== undefined && v !== null) params.append(k, String(v));
-          });
-          const fullScriptUrl = `${sUrl}${sUrl.includes('?') ? '&' : '?'}${params.toString()}`;
-
-          await fetch(fullScriptUrl, {
+          await fetch(sUrl, {
             method: 'POST',
-            headers: { 'Content-Type': 'text/plain' },
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             mode: 'no-cors',
             body: JSON.stringify(directPayload),
           });

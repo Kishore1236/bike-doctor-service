@@ -362,14 +362,9 @@ router.post('/update-status', checkAdminAuth, async (req, res) => {
 
     for (const sUrl of [bookingScriptUrl, customerScriptUrl]) {
       try {
-        const params = new URLSearchParams();
-        Object.entries(payload).forEach(([k, v]) => {
-          if (v !== undefined && v !== null) params.append(k, String(v));
-        });
-        const fullUrl = `${sUrl}?${sUrl.includes('?') ? '&' : '?'}${params.toString()}`;
-        await fetch(fullUrl, {
+        await fetch(sUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           redirect: 'follow',
           body: JSON.stringify(payload),
         });
