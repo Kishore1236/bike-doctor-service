@@ -230,7 +230,7 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
 
     let bookingId = bookingDetails?.bookingId || `BK${Date.now().toString().slice(-6)}${Math.floor(1000 + Math.random() * 9000)}`;
 
-    const scriptUrl = import.meta.env.VITE_GOOGLE_BOOKING_SCRIPT_URL || import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz-7FfKmE6FgZGxs75wMK-QuFuP97U915UAy9Ukeo5JxlgqwYoevb25RQKHFFZkunjw/exec';
+    const scriptUrl = import.meta.env.VITE_GOOGLE_BOOKING_SCRIPT_URL || import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz82A11CY_CXBoKWHPsIGhEMjdDHcZRczDPZPuXK1qtCIOROoPNErLKtwgyKb7smuUQ_g/exec';
 
     try {
       const res = await fetch(`${API_URL}/api/payment/pay-at-service`, {
@@ -294,7 +294,7 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
         time: selectedTimeSlot,
         TimeSlot: selectedTimeSlot,
         'Time Slot': selectedTimeSlot,
-        service: selectedTimeSlot,
+        service: planName,
         bikeModel: selectedBikeModel,
         bike_model: selectedBikeModel,
         bikemodel: selectedBikeModel,
@@ -321,8 +321,8 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
       };
 
       const scriptUrls = [
-        import.meta.env.VITE_GOOGLE_CUSTOMER_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbxyCbvsvoQxXSpXjiJykrfWRyPy_fXSi4Ulr-zx7szw-R-VLLf8yY0HwVyHaLmXIHd8yw/exec',
-        import.meta.env.VITE_GOOGLE_BOOKING_SCRIPT_URL || import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz-7FfKmE6FgZGxs75wMK-QuFuP97U915UAy9Ukeo5JxlgqwYoevb25RQKHFFZkunjw/exec'
+        import.meta.env.VITE_GOOGLE_CUSTOMER_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz82A11CY_CXBoKWHPsIGhEMjdDHcZRczDPZPuXK1qtCIOROoPNErLKtwgyKb7smuUQ_g/exec',
+        import.meta.env.VITE_GOOGLE_BOOKING_SCRIPT_URL || import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz82A11CY_CXBoKWHPsIGhEMjdDHcZRczDPZPuXK1qtCIOROoPNErLKtwgyKb7smuUQ_g/exec'
       ];
 
       for (const sUrl of scriptUrls) {
@@ -580,7 +580,7 @@ function App() {
     if (!user) return;
 
     const syncLocalToBackend = async () => {
-      const scriptUrl = import.meta.env.VITE_GOOGLE_BOOKING_SCRIPT_URL || import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz-7FfKmE6FgZGxs75wMK-QuFuP97U915UAy9Ukeo5JxlgqwYoevb25RQKHFFZkunjw/exec';
+      const scriptUrl = import.meta.env.VITE_GOOGLE_BOOKING_SCRIPT_URL || import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz82A11CY_CXBoKWHPsIGhEMjdDHcZRczDPZPuXK1qtCIOROoPNErLKtwgyKb7smuUQ_g/exec';
       const userEmail = user.email ? user.email.toLowerCase() : '';
       const historyKeys = ['bikeDoctor_history', 'bikeDoctor_history_' + userEmail].filter(Boolean);
 
@@ -638,7 +638,7 @@ function App() {
                   time: selectedTimeSlot,
                   TimeSlot: selectedTimeSlot,
                   'Time Slot': selectedTimeSlot,
-                  service: selectedTimeSlot,
+                  service: item.planName || item.plan || 'Premium Care',
                   bikeModel: selectedBikeModel,
                   bike_model: selectedBikeModel,
                   bikemodel: selectedBikeModel,
@@ -665,8 +665,8 @@ function App() {
                 };
 
                 const scriptUrls = [
-                  import.meta.env.VITE_GOOGLE_CUSTOMER_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbxyCbvsvoQxXSpXjiJykrfWRyPy_fXSi4Ulr-zx7szw-R-VLLf8yY0HwVyHaLmXIHd8yw/exec',
-                  import.meta.env.VITE_GOOGLE_BOOKING_SCRIPT_URL || import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz-7FfKmE6FgZGxs75wMK-QuFuP97U915UAy9Ukeo5JxlgqwYoevb25RQKHFFZkunjw/exec'
+                  import.meta.env.VITE_GOOGLE_CUSTOMER_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz82A11CY_CXBoKWHPsIGhEMjdDHcZRczDPZPuXK1qtCIOROoPNErLKtwgyKb7smuUQ_g/exec',
+                  import.meta.env.VITE_GOOGLE_BOOKING_SCRIPT_URL || import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz82A11CY_CXBoKWHPsIGhEMjdDHcZRczDPZPuXK1qtCIOROoPNErLKtwgyKb7smuUQ_g/exec'
                 ];
 
                 for (const sUrl of scriptUrls) {

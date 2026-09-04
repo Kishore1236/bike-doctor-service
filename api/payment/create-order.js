@@ -23,15 +23,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    const keyId = process.env.RAZORPAY_KEY_ID;
-    const keySecret = process.env.RAZORPAY_KEY_SECRET;
-
-    if (!keyId || !keySecret) {
-      return res.status(500).json({
-        success: false,
-        message: 'Razorpay API credentials (RAZORPAY_KEY_ID & RAZORPAY_KEY_SECRET) not configured in Vercel environment variables.',
-      });
-    }
+    const keyId = process.env.RAZORPAY_KEY_ID || process.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_TWJuD7ky4Sn6X0';
+    const keySecret = process.env.RAZORPAY_KEY_SECRET || 'Eiii2Std5EOSW44iTLrGkMKt';
 
     const { planName, locationType, bookingDetails } = req.body || {};
     const plan = planName || bookingDetails?.planName || bookingDetails?.plan || 'Premium Care';

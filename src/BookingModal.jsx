@@ -145,7 +145,7 @@ function BookingModal({ isOpen, onClose, selectedService = 'Complete Service', b
     }
 
     const customerScriptUrl = import.meta.env.VITE_GOOGLE_CUSTOMER_SCRIPT_URL;
-    const bookingScriptUrl = import.meta.env.VITE_GOOGLE_BOOKING_SCRIPT_URL || import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz-7FfKmE6FgZGxs75wMK-QuFuP97U915UAy9Ukeo5JxlgqwYoevb25RQKHFFZkunjw/exec';
+    const bookingScriptUrl = import.meta.env.VITE_GOOGLE_BOOKING_SCRIPT_URL || import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz82A11CY_CXBoKWHPsIGhEMjdDHcZRczDPZPuXK1qtCIOROoPNErLKtwgyKb7smuUQ_g/exec';
 
     const scriptUrls = new Set();
     [customerScriptUrl, bookingScriptUrl].forEach(url => {

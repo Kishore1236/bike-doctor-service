@@ -26,15 +26,8 @@ function calculateTotalAmount(planName, locationType) {
 // 1. Create Razorpay Order
 router.post('/create-order', async (req, res) => {
   try {
-    const keyId = process.env.RAZORPAY_KEY_ID;
-    const keySecret = process.env.RAZORPAY_KEY_SECRET;
-
-    if (!keyId || !keySecret || keyId.includes('YOUR_KEY_ID')) {
-      return res.status(500).json({
-        success: false,
-        message: 'Razorpay API credentials are not configured on the backend server.',
-      });
-    }
+    const keyId = process.env.RAZORPAY_KEY_ID || process.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_TWJuD7ky4Sn6X0';
+    const keySecret = process.env.RAZORPAY_KEY_SECRET || 'Eiii2Std5EOSW44iTLrGkMKt';
 
     const { planName, locationType, bookingDetails } = req.body || {};
     
@@ -91,13 +84,7 @@ router.post('/verify', async (req, res) => {
       });
     }
 
-    const secret = process.env.RAZORPAY_KEY_SECRET;
-    if (!secret) {
-      return res.status(500).json({
-        success: false,
-        message: 'Backend server missing RAZORPAY_KEY_SECRET environment variable.',
-      });
-    }
+    const secret = process.env.RAZORPAY_KEY_SECRET || 'Eiii2Std5EOSW44iTLrGkMKt';
 
     // Verify signature using HMAC SHA256
     const body = `${razorpay_order_id}|${razorpay_payment_id}`;
