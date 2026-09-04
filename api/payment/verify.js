@@ -37,8 +37,8 @@ export default async function handler(req, res) {
     const formattedAmount = bookingDetails?.totalAmount || '₹319';
 
     // Submit confirmed record to Google Sheets via Google Script URLs
-    const bookingScriptUrl = process.env.GOOGLE_BOOKING_SCRIPT_URL || process.env.GOOGLE_SCRIPT_URL || process.env.VITE_GOOGLE_BOOKING_SCRIPT_URL || process.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz82A11CY_CXBoKWHPsIGhEMjdDHcZRczDPZPuXK1qtCIOROoPNErLKtwgyKb7smuUQ_g/exec';
-    const customerScriptUrl = process.env.GOOGLE_CUSTOMER_SCRIPT_URL || process.env.VITE_GOOGLE_CUSTOMER_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz82A11CY_CXBoKWHPsIGhEMjdDHcZRczDPZPuXK1qtCIOROoPNErLKtwgyKb7smuUQ_g/exec';
+    const bookingScriptUrl = process.env.GOOGLE_BOOKING_SCRIPT_URL || process.env.GOOGLE_SCRIPT_URL || process.env.VITE_GOOGLE_BOOKING_SCRIPT_URL || process.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbw0yS2sAlX6V8QfFW20CtI2vgAQsjHeuPHhEDrMCNV3W1N0dON2-_W7xhU-dLmZy403VQ/exec';
+    const customerScriptUrl = process.env.GOOGLE_CUSTOMER_SCRIPT_URL || process.env.VITE_GOOGLE_CUSTOMER_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbw0yS2sAlX6V8QfFW20CtI2vgAQsjHeuPHhEDrMCNV3W1N0dON2-_W7xhU-dLmZy403VQ/exec';
 
     const formattedTimestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
 

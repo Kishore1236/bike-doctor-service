@@ -342,8 +342,8 @@ router.post('/update-status', checkAdminAuth, async (req, res) => {
     if (name) global.bookingStatusStore[`name_${String(name).toLowerCase()}`] = storePayload;
     if (email) global.bookingStatusStore[`email_${String(email).toLowerCase()}`] = storePayload;
 
-    const bookingScriptUrl = process.env.GOOGLE_BOOKING_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz82A11CY_CXBoKWHPsIGhEMjdDHcZRczDPZPuXK1qtCIOROoPNErLKtwgyKb7smuUQ_g/exec';
-    const customerScriptUrl = process.env.GOOGLE_CUSTOMER_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz82A11CY_CXBoKWHPsIGhEMjdDHcZRczDPZPuXK1qtCIOROoPNErLKtwgyKb7smuUQ_g/exec';
+    const bookingScriptUrl = process.env.GOOGLE_BOOKING_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbw0yS2sAlX6V8QfFW20CtI2vgAQsjHeuPHhEDrMCNV3W1N0dON2-_W7xhU-dLmZy403VQ/exec';
+    const customerScriptUrl = process.env.GOOGLE_CUSTOMER_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbw0yS2sAlX6V8QfFW20CtI2vgAQsjHeuPHhEDrMCNV3W1N0dON2-_W7xhU-dLmZy403VQ/exec';
 
     const payload = {
       bookingId,
