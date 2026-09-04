@@ -80,6 +80,20 @@ export default async function handler(req, res) {
       const cells = row.c || [];
       const getVal = (idx) => (cells[idx] && cells[idx].v !== null && cells[idx].v !== undefined) ? String(cells[idx].v).trim() : '';
 
+      const rawTimestamp = getVal(0);
+      const rawName = getVal(1);
+
+      // Skip empty rows or header row ("Timestamp", "Name", "Booking ID")
+      if (!rawTimestamp && !rawName) return;
+      if (
+        rawTimestamp.toLowerCase().includes('timestamp') ||
+        rawName.toLowerCase() === 'name' ||
+        getVal(11).toLowerCase().includes('booking id') ||
+        getVal(2).toLowerCase().includes('pickup type')
+      ) {
+        return;
+      }
+
       let isExactEmailMatch = false;
 
       // 1. Check all cells for exact email or email prefix
