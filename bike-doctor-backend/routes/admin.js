@@ -148,12 +148,9 @@ router.get('/bookings', checkAdminAuth, async (req, res) => {
       const email = getVal(14) || 'Not provided';
       const rowIndex = index + 2;
 
-      if (global.bookingStatusStore) {
+      if (global.bookingStatusStore && bookingId) {
         const override = global.bookingStatusStore[bookingId] ||
-                         global.bookingStatusStore[String(bookingId).toLowerCase()] ||
-                         global.bookingStatusStore[`row_${rowIndex}`] ||
-                         (name ? global.bookingStatusStore[`name_${String(name).toLowerCase()}`] : null) ||
-                         (email ? global.bookingStatusStore[`email_${String(email).toLowerCase()}`] : null);
+                         global.bookingStatusStore[String(bookingId).toLowerCase()];
         if (override) {
           paymentStatus = override.paymentStatus || paymentStatus;
           paymentMethod = override.paymentMethod || paymentMethod;

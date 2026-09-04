@@ -90,7 +90,7 @@ export default async function handler(req, res) {
       time: selectedTimeSlot,
       TimeSlot: selectedTimeSlot,
       'Time Slot': selectedTimeSlot,
-      service: selectedTimeSlot,
+      service: bookingDetails?.plan || bookingDetails?.planName || 'Premium Care',
       bikeModel: selectedBikeModel,
       bike_model: selectedBikeModel,
       bikemodel: selectedBikeModel,
@@ -146,6 +146,57 @@ export default async function handler(req, res) {
       } catch (err) {
         console.warn(`Google Script submit notice (${url}):`, err.message);
       }
+    }
+
+    // Direct Google Sheets API append for all 15 columns A:O
+    try {
+      const emailAcc = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+      const privateKey = process.env.GOOGLE_PRIVATE_KEY
+        ? process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n')
+        : undefined;
+      const customerSheetId = process.env.GOOGLE_CUSTOMER_SHEET_ID || process.env.GOOGLE_SHEET_ID || '1ct2jXUykSUX2XpU3vFVTZmDXZTHCliqV89ea92o5wFM';
+
+      if (emailAcc && privateKey) {
+        const { google } = await import('googleapis');
+        const auth = new google.auth.JWT({
+          email: emailAcc,
+          key: privateKey,
+          scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+        });
+        const sheets = google.sheets({ version: 'v4', auth });
+
+        const selectedPlanLabel = bookingDetails?.plan || bookingDetails?.planName || 'Premium Care';
+        const methodStr = bookingDetails?.paymentMethod ? bookingDetails?.paymentMethod.toUpperCase() : 'PAY ONLINE (UPI)';
+
+        const row = [
+          formattedTimestamp,
+          payload['Name'],
+          payload['Pickup Type'],
+          payload['Location'],
+          payload['Mobile'],
+          payload['Alternate Mobile'],
+          payload['Bike Owner Name'],
+          payload['Alternate Contact person'],
+          payload['Time Slot'],
+          payload['Bike Model'],
+          selectedPlanLabel,
+          bookingId,
+          methodStr,
+          'PAID',
+          userEmailVal || payload['Email'] || 'Not provided',
+        ];
+
+        await sheets.spreadsheets.values.append({
+          spreadsheetId: customerSheetId,
+          range: 'A:O',
+          valueInputOption: 'USER_ENTERED',
+          insertDataOption: 'INSERT_ROWS',
+          requestBody: { values: [row] },
+        });
+        console.log(`Directly appended paid booking ${bookingId} to Google Sheet A:O`);
+      }
+    } catch (sheetErr) {
+      console.warn('Direct Google Sheet append notice:', sheetErr.message);
     }
 
     return res.status(200).json({

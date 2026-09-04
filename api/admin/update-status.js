@@ -81,9 +81,7 @@ export default async function handler(req, res) {
       updatedAt: Date.now(),
     };
     global.bookingStatusStore[bookingId] = storePayload;
-    global.bookingStatusStore[bookingId.toLowerCase()] = storePayload;
-    if (rowIndex) global.bookingStatusStore[`row_${rowIndex}`] = storePayload;
-    if (name) global.bookingStatusStore[`name_${String(name).toLowerCase()}`] = storePayload;
+    if (bookingId) global.bookingStatusStore[bookingId.toLowerCase()] = storePayload;
     if (email) global.bookingStatusStore[`email_${String(email).toLowerCase()}`] = storePayload;
 
     const bookingScriptUrl = process.env.GOOGLE_BOOKING_SCRIPT_URL || process.env.GOOGLE_SCRIPT_URL || process.env.VITE_GOOGLE_BOOKING_SCRIPT_URL || process.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz-7FfKmE6FgZGxs75wMK-QuFuP97U915UAy9Ukeo5JxlgqwYoevb25RQKHFFZkunjw/exec';
