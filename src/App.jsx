@@ -232,6 +232,7 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
 
     const scriptUrl = import.meta.env.VITE_GOOGLE_BOOKING_SCRIPT_URL || import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbz82A11CY_CXBoKWHPsIGhEMjdDHcZRczDPZPuXK1qtCIOROoPNErLKtwgyKb7smuUQ_g/exec';
 
+    let apiSucceeded = false;
     try {
       const res = await fetch(`${API_URL}/api/payment/pay-at-service`, {
         method: 'POST',
@@ -243,15 +244,17 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
         const data = await res.json();
         if (data.success && data.bookingId) {
           bookingId = data.bookingId;
+          apiSucceeded = true;
         }
       }
     } catch (err) {
       console.warn('Pay at Service API notice:', err.message);
     }
 
-    // Direct Google Sheets client dispatch fallback
-    try {
-      const formattedTimestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+    // Direct Google Sheets client dispatch fallback ONLY if server API failed
+    if (!apiSucceeded) {
+      try {
+        const formattedTimestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
       const userEmailVal = bookingDetails?.email ? String(bookingDetails.email).trim().toLowerCase() : '';
       const rawLoc = bookingDetails?.landmark || bookingDetails?.location || bookingDetails?.address || '';
       const cleanLoc = rawLoc.replace(/\s*\|\s*[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/gi, '').trim();
@@ -345,6 +348,7 @@ function PaymentPage({ selectedService, bookingDetails, onBack, onComplete }) {
     } catch (directErr) {
       console.warn('Direct Google Script client dispatch notice:', directErr);
     }
+  }
 
     const record = {
       bookingId,
@@ -541,7 +545,7 @@ function App() {
 
   const addBookingToHistory = (newBooking) => {
     const userEmail = user?.email ? user.email.toLowerCase() : '';
-    const bookingWithEmail = { ...newBooking, email: userEmail || newBooking.email || '' };
+    const bookingWithEmail = { ...newBooking, email: userEmail || newBooking.email || '', _synced: true };
     setBookingsHistory((prev) => {
       const filtered = (prev || []).filter(b => b && b.bookingId !== bookingWithEmail.bookingId);
       const updated = [bookingWithEmail, ...filtered];
