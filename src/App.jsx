@@ -557,6 +557,40 @@ function App() {
     });
   };
 
+  const handleDeleteBooking = (bookingIdToDelete, bookingItem) => {
+    const userEmail = user?.email ? user.email.toLowerCase() : '';
+    setBookingsHistory((prev) => {
+      const updated = (prev || []).filter(b => {
+        if (!b) return false;
+        if (bookingIdToDelete && (b.bookingId === bookingIdToDelete || b.id === bookingIdToDelete)) return false;
+        if (bookingItem?.bookingId && (b.bookingId === bookingItem.bookingId || b.id === bookingItem.bookingId)) return false;
+        return true;
+      });
+      if (userEmail) {
+        try {
+          localStorage.setItem('bikeDoctor_history_' + userEmail, JSON.stringify(updated));
+        } catch (e) {}
+      }
+      try {
+        localStorage.setItem('bikeDoctor_history', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+  };
+
+  const handleClearAllHistory = () => {
+    const userEmail = user?.email ? user.email.toLowerCase() : '';
+    setBookingsHistory([]);
+    if (userEmail) {
+      try {
+        localStorage.removeItem('bikeDoctor_history_' + userEmail);
+      } catch (e) {}
+    }
+    try {
+      localStorage.removeItem('bikeDoctor_history');
+    } catch (e) {}
+  };
+
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || '979562784305-qv4cn7nkbs9evd9b6d3dg1okvd96qmsj.apps.googleusercontent.com';
 
   const channels = [
@@ -964,6 +998,8 @@ function App() {
             isOpen={isMyBookingsOpen}
             onClose={() => setIsMyBookingsOpen(false)}
             bookings={bookingsHistory}
+            onDeleteBooking={handleDeleteBooking}
+            onClearAllHistory={handleClearAllHistory}
           />
         </>
       );
@@ -999,6 +1035,8 @@ function App() {
             isOpen={isMyBookingsOpen}
             onClose={() => setIsMyBookingsOpen(false)}
             bookings={bookingsHistory}
+            onDeleteBooking={handleDeleteBooking}
+            onClearAllHistory={handleClearAllHistory}
           />
         </>
       );
@@ -1026,6 +1064,8 @@ function App() {
           isOpen={isMyBookingsOpen}
           onClose={() => setIsMyBookingsOpen(false)}
           bookings={bookingsHistory}
+          onDeleteBooking={handleDeleteBooking}
+          onClearAllHistory={handleClearAllHistory}
         />
       </>
     );

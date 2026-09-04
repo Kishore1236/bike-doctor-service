@@ -1,7 +1,7 @@
 import React from 'react';
 import { downloadInvoicePDF } from './utils/invoiceGenerator';
 
-function MyBookingsModal({ isOpen, onClose, bookings = [] }) {
+function MyBookingsModal({ isOpen, onClose, bookings = [], onDeleteBooking, onClearAllHistory }) {
   const uniqueBookings = React.useMemo(() => {
     const list = [];
     (bookings || []).forEach(item => {
@@ -35,6 +35,22 @@ function MyBookingsModal({ isOpen, onClose, bookings = [] }) {
 
   if (!isOpen) return null;
 
+  const handleDeleteItem = (bookingId, item) => {
+    if (window.confirm(`Are you sure you want to delete booking ${bookingId} from your history?`)) {
+      if (onDeleteBooking) {
+        onDeleteBooking(bookingId, item);
+      }
+    }
+  };
+
+  const handleClearAll = () => {
+    if (window.confirm("Are you sure you want to delete ALL booking invoices from your history?")) {
+      if (onClearAllHistory) {
+        onClearAllHistory();
+      }
+    }
+  };
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="my-bookings-modal-content" onClick={(e) => e.stopPropagation()}>
@@ -46,7 +62,19 @@ function MyBookingsModal({ isOpen, onClose, bookings = [] }) {
               <p>Your bike maintenance history and downloadable invoices</p>
             </div>
           </div>
-          <button className="modal-close" onClick={onClose} aria-label="Close modal">✕</button>
+          <div className="header-right-actions">
+            {uniqueBookings.length > 0 && (
+              <button
+                type="button"
+                className="clear-all-history-btn"
+                onClick={handleClearAll}
+                title="Delete all booking invoices"
+              >
+                🗑️ Clear All History
+              </button>
+            )}
+            <button className="modal-close" onClick={onClose} aria-label="Close modal">✕</button>
+          </div>
         </div>
 
         <div className="my-bookings-body">
@@ -103,13 +131,23 @@ function MyBookingsModal({ isOpen, onClose, bookings = [] }) {
                         📅 {item.createdAt || item.timestamp || 'Recent Booking'}
                       </span>
 
-                      <button
-                        type="button"
-                        className="card-invoice-btn"
-                        onClick={() => downloadInvoicePDF(item)}
-                      >
-                        📄 Download Invoice (PDF)
-                      </button>
+                      <div className="card-footer-actions">
+                        <button
+                          type="button"
+                          className="card-invoice-btn"
+                          onClick={() => downloadInvoicePDF(item)}
+                        >
+                          📄 Download Invoice (PDF)
+                        </button>
+                        <button
+                          type="button"
+                          className="card-delete-btn"
+                          onClick={() => handleDeleteItem(bookingId, item)}
+                          title="Delete this booking invoice from history"
+                        >
+                          🗑️ Delete History
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );
