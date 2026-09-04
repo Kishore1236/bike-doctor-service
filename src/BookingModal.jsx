@@ -129,6 +129,12 @@ function BookingModal({ isOpen, onClose, selectedService = 'Complete Service', b
       'Time Slot': formData.timeSlot,
       'Bike Model': formData.bikeModel.trim(),
       'Plan': fullPlanLabel,
+      'Booking ID': bookingId,
+      'Payment Method': 'Pay at Service',
+      'payment status': 'Pending',
+      'Payment Status': 'Pending',
+      'email': user?.email || 'Not provided',
+      'Email': user?.email || 'Not provided',
     };
 
     setSubmitting(false);

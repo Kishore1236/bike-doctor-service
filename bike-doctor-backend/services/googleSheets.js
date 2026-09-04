@@ -157,11 +157,12 @@ export async function appendBooking(bookingData) {
     bookingData.bookingId || '',
     bookingData.paymentMethod || '',
     bookingData.paymentStatus || '',
+    bookingData.email || 'Not provided',
   ];
 
   const response = await sheets.spreadsheets.values.append({
     spreadsheetId,
-    range: `${sheetName}!A:N`,
+    range: `${sheetName}!A:O`,
     valueInputOption: 'USER_ENTERED',
     insertDataOption: 'INSERT_ROWS',
     requestBody: {
